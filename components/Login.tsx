@@ -38,7 +38,7 @@ export default function Login() {
     <>
       <main className="flex items-center justify-center">
         <section className="flex flex-col p-14 rounded-lg mx-4 bg-blue-300 shadow-lg opacity-90">
-          <header className="mb-6 text-3xl font-bold">Ingresar a la aplicación</header>
+          <header className="mb-6 text-3xl font-bold">TP Integrador - DAN 2023</header>
           <form onSubmit={handleLogin}>
             <div className="flex items-center mb-4 rounded-md bg-blue-50">
               <FontAwesomeIcon icon={faUser} className="mx-2" />
@@ -49,6 +49,7 @@ export default function Login() {
                 placeholder="Usuario"
                 type="text"
                 value={user}
+                required
               />
             </div>
             <div className="flex items-center mb-4 rounded-md bg-blue-50">
@@ -60,6 +61,7 @@ export default function Login() {
                 placeholder="*********"
                 type={showPassword ? 'text' : 'password'}
                 value={password}
+                required
               />
               <button
                 className="p-1 rounded-md bg-gray-300 mr-1 ml-1 hover:bg-gray-400 transition duration-200 ease-in-out text-sm"
