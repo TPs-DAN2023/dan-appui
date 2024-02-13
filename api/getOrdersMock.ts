@@ -1,6 +1,6 @@
 import getProductsMock from "./getProductsMock";
 
-export default async function getPedidosMock(userId: number) {
+export default function getPedidosMock(userId: number) {
   console.log("Buscando pedidos...");
 
   if (!userId) {
@@ -8,19 +8,21 @@ export default async function getPedidosMock(userId: number) {
   }
 
   // Wait randomly between 300 and 5000 ms for our 'request'
-  const wait = Math.floor(Math.random() * 300) + 200;
-  await new Promise((p) => setTimeout(p, wait));
+  // const wait = Math.floor(Math.random() * 300) + 200;
+  // await new Promise((p) => setTimeout(p, wait));
 
-  const localPedidos = localStorage.getItem(pedidos_key);
-  if (localPedidos) {
-    console.log("Recuperamos tus pedidos!");
-    return JSON.parse(localPedidos);
-  } else {
-    console.log("Generamos tus pedidos!");
-    const pedidos = pedidosMock();
-    localStorage.setItem(pedidos_key, JSON.stringify(pedidos));
-    return pedidos;
-  }
+  // const localPedidos = localStorage.getItem(pedidos_key);
+  // if (localPedidos) {
+  //   console.log("Recuperamos tus pedidos!");
+  //   return JSON.parse(localPedidos);
+  // } else {
+  //   console.log("Generamos tus pedidos!");
+  //   const pedidos = pedidosMock();
+  //   localStorage.setItem(pedidos_key, JSON.stringify(pedidos));
+  //   return pedidos;
+  // }
+
+  return pedidosMock()
 }
 
 const pedidos_key = "pedidos";

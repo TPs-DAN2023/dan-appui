@@ -1,9 +1,9 @@
-export default async function getUsersMock(userId: number) {
+export default function getUsersMock(userId: number) {
   console.log("Buscando usuarios...");
 
   // Wait randomly between 300 and 5000 ms for our 'request'
-  const wait = Math.floor(Math.random() * 300) + 200;
-  await new Promise((p) => setTimeout(p, wait));
+  // const wait = Math.floor(Math.random() * 300) + 200;
+  // await new Promise((p) => setTimeout(p, wait));
 
   return [
     {

@@ -1,9 +1,9 @@
-export default async function getProductsMock(userId: number) {
+export default function getProductsMock(userId: number) {
   console.log("Buscando productos...");
 
   // Wait randomly between 300 and 5000 ms for our 'request'
-  const wait = Math.floor(Math.random() * 300) + 200;
-  await new Promise((p) => setTimeout(p, wait));
+  // const wait = Math.floor(Math.random() * 300) + 200;
+  // await new Promise((p) => setTimeout(p, wait));
 
   return [
     {
