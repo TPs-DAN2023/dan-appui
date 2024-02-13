@@ -1,7 +1,6 @@
 'use client'
 
-import CustomButton from "@/components/CustomButton";
-import Login from "@/components/Login";
+import { Login, CustomButton } from "@/components";
 
 export default function Home() {
 

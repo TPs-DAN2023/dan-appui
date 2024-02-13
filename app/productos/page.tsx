@@ -1,11 +1,19 @@
 'use client'
 
-import CustomButton from "@/components/CustomButton";
-import { useState } from "react";
+import { List, ProductDetails, ProductItem, Layout, ProductHome } from "@/components";
+import { useEffect, useState } from "react";
+import { getProductsMock } from "../../api";
+import CreateProduct from "@/components/CreateProduct/CreateProduct";
 
 export default function Productos() {
 
   const [productsResult, setProductsResult] = useState({});
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [isCreatingProduct, setIsCreatingProduct] = useState(false);
+
+  useEffect(() => {
+    console.log(selectedItem)
+  }, [selectedItem]);
 
   const getAllProducts = async () => {
     // Fetch data from external API
@@ -20,16 +28,59 @@ export default function Productos() {
     setProductsResult(data);
   }
 
+  // function renderProductHome() {
+  //   if (!selectedItem) {
+  //     return (
+  //       <div className="flex flex-col flex-grow justify-center items-center gap-y-5">
+  //         <ProductHome />
+  //       </div>
+  //     );
+  // }
+
+  // return null;
+  // }
+
+  // function renderProductDetails() {
+    
+  //   if (selectedItem) {
+  //     return (
+  //       <div className="overflow-x-hidden overflow-y-scroll justify-center items-center flex flex-grow">
+  //         <ProductDetails
+  //           product={selectedItem}
+  //           onClearSelectionPressed={() => setSelectedItem(null)}
+  //         />
+  //       </div>
+  //     )
+  //   }
+
+  //   return null;
+  // }
+
   return (
-    <>
-      <h1 className="flex justify-center">Productos</h1>
-      <section className="flex gap-4 justify-center">
-        <CustomButton text="Get all" onClick={getAllProducts} />
-      </section>
-      <span>{ productsResult && JSON.stringify(productsResult) }</span>
-      <section className="flex gap-4 justify-center mt-5">
-        <CustomButton text="Volver" href="/" />
-      </section>
-    </>
+    <Layout>
+      {/* <section className="h-screen flex flex-col"> */}
+      <div className="overflow-x-hidden overflow-y-scroll border-r min-w-[400px]">
+        <List items={getProductsMock(1)} onClick={setSelectedItem}>
+          {(item, onClick) => <ProductItem product={item} onClick={onClick} />}
+        </List>
+      </div>
+
+      <div className="flex flex-col flex-grow">
+        <ProductHome 
+          show={!selectedItem}
+          onCreateProductPressed={() => setIsCreatingProduct(true)}
+        />
+        <ProductDetails 
+          show={!!selectedItem}             
+          product={selectedItem}
+          onClearSelectionPressed={() => setSelectedItem(null)}
+        />
+        <CreateProduct
+          show={isCreatingProduct}
+          onClose={() => setIsCreatingProduct(false)}
+        />
+      </div>
+      {/* </section> */}
+    </Layout>
   );
 }

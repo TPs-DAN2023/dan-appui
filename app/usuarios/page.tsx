@@ -1,11 +1,13 @@
 'use client'
 
-import CustomButton from "@/components/CustomButton";
+import { List, UserDetails, UserItem, Layout, UserHome } from "@/components";
 import { useState } from "react";
+import { getUsersMock } from "../../api";
 
 export default function Usuarios() {
   
   const [usersResult, setUsersResult] = useState({});
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const getAllUsers = async () => {
     // Fetch data from external API
@@ -21,15 +23,23 @@ export default function Usuarios() {
   }
 
   return (
-    <>
-      <h1 className="flex justify-center">Usuarios</h1>
-      <section className="flex gap-4 justify-center">
-        <CustomButton text="Get all" onClick={getAllUsers} />
-      </section>
-      <span>{ usersResult && JSON.stringify(usersResult) }</span>
-      <section className="flex gap-4 justify-center mt-5">
-        <CustomButton text="Volver" href="/" />
-      </section>
-    </>
+    <Layout>
+      <div className="overflow-x-hidden overflow-y-scroll border-r min-w-[400px]">
+        <List items={getUsersMock(1)} onClick={setSelectedItem}>
+          {(item, onClick) => <UserItem user={item} onClick={onClick} />}
+        </List>
+      </div>
+
+      <div className="flex flex-col flex-grow">
+        <UserHome 
+          show={!selectedItem} 
+        />
+        <UserDetails
+          show={!!selectedItem}
+          user={selectedItem}
+          onClearSelectionPressed={() => setSelectedItem(null)}
+        />
+      </div>
+    </Layout>
   );
 }

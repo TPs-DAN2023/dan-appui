@@ -1,11 +1,21 @@
 'use client'
 
-import CustomButton from "@/components/CustomButton";
+import { List, OrderDetails, OrderItem, Item, Layout, OrderHome } from "@/components";
 import { useState } from "react";
+import { getOrdersMock } from "../../api";
+import { extractOrderAttributes } from "@/utils";
+
+interface OrderProps {
+  id: string;
+  fechaPedido: string;
+  estado: { id: string; estado: string };
+  detalle: { id: string; producto: { id: number; descripcion: string; precio: number }; cantidad: number; precio: number }[];
+}
 
 export default function Pedidos() {
 
   const [ordersResult, setOrdersResult] = useState({});
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const getAllPedidos = async () => {
     // Fetch data from external API
@@ -21,15 +31,27 @@ export default function Pedidos() {
   }
 
   return (
-    <>
-      <h1 className="flex justify-center">Pedidos</h1>
-      <section className="flex gap-4 justify-center">
-        <CustomButton text="Get all" onClick={getAllPedidos} />
-      </section>
-      <span>{ ordersResult && JSON.stringify(ordersResult) }</span>
-      <section className="flex gap-4 justify-center mt-5">
-        <CustomButton text="Volver" href="/" />
-      </section>
-    </>
+    <Layout>
+      <div className="overflow-x-hidden overflow-y-scroll border-r min-w-[400px]">
+        <List items={getOrdersMock(1)} onClick={setSelectedItem}>
+          {/* {(item, onClick) => <OrderItem order={item} onClick={onClick} />} */}
+          {(item: OrderProps, onClick: any): any => {
+            const orderAttributes = extractOrderAttributes(item);
+            // See why infinite loop
+            <Item title={orderAttributes.title} body={orderAttributes.body} footer={orderAttributes.footer} status={orderAttributes.status} onClick={onClick(item)} />}
+          }
+        </List>
+      </div>
+      <div className="flex flex-col flex-grow overflow-x-hidden overflow-y-scroll">
+        <OrderHome 
+          show={!selectedItem} 
+        />
+        <OrderDetails
+          show={!!selectedItem}
+          order={selectedItem}
+          onClearSelectionPressed={() => setSelectedItem(null)}
+        />
+      </div>
+    </Layout>
   );
 }
