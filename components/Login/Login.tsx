@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from "react";
-import { login } from '../api';
+import { login } from '../../api';
 import { useRouter } from 'next/navigation';
-import { ROUTES } from '../constants';
+import { ROUTES } from '../../constants';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock, faUser } from "@fortawesome/free-solid-svg-icons";
 // import Link from "next/link";

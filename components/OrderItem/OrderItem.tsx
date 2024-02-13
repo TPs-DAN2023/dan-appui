@@ -1,3 +1,8 @@
+'use client'
+
+import { ViewButton, EditButton, DeleteButton } from "../index";
+import { formatDate } from "../../utils";
+
 interface OrderItemProps {
   order: {
     id: string;
@@ -11,19 +16,24 @@ interface OrderItemProps {
 export default function OrderItem({ order, onClick }: OrderItemProps) {
   // const estado = order.estado.estado;
   return (
-    <div className="rounded-lg p-4 cursor-pointer" onClick={() => onClick(order)}>
-      <p className="text-medium font-bold capitalize overflow-ellipsis overflow-hidden whitespace-nowrap">
-        {/* {`Id de Pedido: ${order.id}`} */}
-        {"Id de pedido: " + order.id}
-      </p>
+    <div className="rounded-lg p-4 cursor-pointer">
+      <header className="flex justify-between">
+        <p className="text-medium font-bold capitalize overflow-ellipsis overflow-hidden whitespace-nowrap">
+          {`ID pedido: ${order.id}`}
+        </p>
+        <div className="flex gap-x-3">
+          <ViewButton onClick={ () => onClick(order) } />
+          <EditButton onClick={ () => {} } />
+          <DeleteButton onClick={ () => {} } />
+        </div>
+      </header>
       <hr className="mt-2 mb-1 border border-blue-400" />
       <div className="flex flex-row justify-between items-center">
         <div className="flex flex-col">
           <p className="overflow-ellipsis overflow-hidden whitespace-nowrap mr-2 text-small">
-            {/* {`Fecha: ${dayjs(order.fechaPedido).locale(es).format("D MMMM YYYY")}`} */}
+            {`Fecha: ${formatDate(order.fechaPedido)}`}
           </p>
           <p className="overflow-ellipsis overflow-hidden whitespace-nowrap mr-2 text-small">
-            {/* {`Nº de productos: ${order.detalle.length}`} */}
             {order.detalle && order.detalle.length + " productos"}
           </p>
         </div>

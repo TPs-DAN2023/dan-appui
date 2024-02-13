@@ -5,11 +5,7 @@ import { ROUTES } from "../../constants";
 import Image from "next/image";
 import Link from "next/link";
 
-interface NavBarProps {
-  setSelectedTab: any;
-}
-
-export default function NavBar ({ setSelectedTab }: NavBarProps) {
+export default function NavBar () {
 
   return (
     <>
@@ -19,9 +15,15 @@ export default function NavBar ({ setSelectedTab }: NavBarProps) {
           <h1 className="pl-4">Marketplace B2B</h1>
         </div>
         <div className="flex items-center justify-center gap-x-5">
-          <button onClick={() => setSelectedTab('orders')} className="ml-2 bg-blue-500 text-white rounded px-2 py-1 hover:bg-blue-700 transition-all">Pedidos</button>
-          <button onClick={() => setSelectedTab('products')} className="ml-2 bg-blue-500 text-white rounded px-2 py-1 hover:bg-blue-700 transition-all">Productos</button>
-          <button onClick={() => setSelectedTab('users')} className="ml-2 bg-blue-500 text-white rounded px-2 py-1 hover:bg-blue-700 transition-all">Usuarios</button>
+          <Link href="/pedidos">
+            <button onClick={() => {}} className="ml-2 bg-blue-500 text-white rounded px-2 py-1 hover:bg-blue-700 transition-all">Pedidos</button>
+          </Link>
+          <Link href="/productos">
+            <button onClick={() => {}} className="ml-2 bg-blue-500 text-white rounded px-2 py-1 hover:bg-blue-700 transition-all">Productos</button>
+          </Link>
+          <Link href="/usuarios">
+            <button onClick={() => {}} className="ml-2 bg-blue-500 text-white rounded px-2 py-1 hover:bg-blue-700 transition-all">Usuarios</button>
+          </Link>
         </div>
         <div className="flex items-center gap-x-5">
           <div className="w-8 h-8 relative">

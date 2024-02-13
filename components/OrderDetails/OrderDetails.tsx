@@ -1,8 +1,6 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faQuestionCircle, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
-import { OrderItem } from "..";
+import { ClearButton } from "..";
 
-interface OrderDetailProps {
+interface OrderDetailsProps {
   order: {
     id: string;
     fechaPedido: string;
@@ -19,43 +17,26 @@ interface OrderDetailProps {
       precio: number }[];
   } | null;
   onClearSelectionPressed: VoidFunction;
-  isBackVisible: boolean;
+  show: boolean;
 }
 
-export default function OrderDetail({ order, onClearSelectionPressed, isBackVisible }: OrderDetailProps) {
-  if (!order)
-    return (
-      <div className="flex flex-1 items-center justify-center">
-        <div className="flex flex-col items-center space-y-4 px-4 py-10 rounded-xl bg-blue-400 mx-4 sm:mx-4 md:mx-20">
-          {/* <QuestionOutlineIcon className="w-14 h-14" /> */}
-          <FontAwesomeIcon icon={faQuestionCircle} className="w-14 h-14" />
-          <p className="text-xl text-center">
-            No hay ningún pedido seleccionado
-          </p>
-          <hr />
-          <p className="text-medium text-center">
-            Seleccione un pedido de la lista para visualizar el detalle del mismo.
-          </p>
-        </div>
-      </div>
-    );
+export default function OrderDetails({ order, onClearSelectionPressed, show }: OrderDetailsProps) {
+
+  if (!show || !order) {
+    return null;
+  }
 
   return (
     <div className="flex flex-1 flex-col">
-      {!isBackVisible && (
-        <div className="flex mx-4 sm:mx-4 md:mx-20 mt-6 flex-row-reverse">
-          <button
-            className="rounded-3xl self-end"
-            onClick={() => onClearSelectionPressed()}
-          >
-            <FontAwesomeIcon icon={faTimesCircle} />
-          </button>
+      {(
+        <div className="flex mx-4 sm:mx-4 md:mx-20 mt-6 flex-row-reverse text-2xl">
+          <ClearButton onClick={ () => onClearSelectionPressed() } />
         </div>
       )}
 
-      <div className="mx-4 sm:mx-4 md:mx-20 mt-6">
+      {/* <div className="mx-4 sm:mx-4 md:mx-20 mt-6">
         <OrderItem order={order} onClick={() => {}} />
-      </div>
+      </div> */}
 
       <div className="mx-4 sm:mx-4 md:mx-20 mt-6 bg-blue-300 rounded-6 p-4">
         <div className="flex justify-between">
