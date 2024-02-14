@@ -1,3 +1,5 @@
+'use client'
+
 import getProductsMock from "./getProductsMock";
 
 export default function getPedidosMock(userId: number) {
@@ -11,16 +13,16 @@ export default function getPedidosMock(userId: number) {
   // const wait = Math.floor(Math.random() * 300) + 200;
   // await new Promise((p) => setTimeout(p, wait));
 
-  // const localPedidos = localStorage.getItem(pedidos_key);
-  // if (localPedidos) {
-  //   console.log("Recuperamos tus pedidos!");
-  //   return JSON.parse(localPedidos);
-  // } else {
-  //   console.log("Generamos tus pedidos!");
-  //   const pedidos = pedidosMock();
-  //   localStorage.setItem(pedidos_key, JSON.stringify(pedidos));
-  //   return pedidos;
-  // }
+  const localPedidos = localStorage.getItem(pedidos_key);
+  if (localPedidos) {
+    console.log("Recuperamos tus pedidos!");
+    return JSON.parse(localPedidos);
+  } else {
+    console.log("Generamos tus pedidos!");
+    const pedidos = pedidosMock();
+    localStorage.setItem(pedidos_key, JSON.stringify(pedidos));
+    return pedidos;
+  }
 
   return pedidosMock()
 }
