@@ -67,7 +67,7 @@ export default function Productos() {
 
       <div className="flex flex-col flex-grow">
         <ProductHome 
-          show={!selectedItem}
+          show={!selectedItem && !isCreatingProduct}
           onCreateProductPressed={() => setIsCreatingProduct(true)}
         />
         <ProductDetails 
@@ -77,7 +77,7 @@ export default function Productos() {
         />
         <CreateProduct
           show={isCreatingProduct}
-          onClose={() => setIsCreatingProduct(false)}
+          onCancel={() => setIsCreatingProduct(false)}
         />
       </div>
       {/* </section> */}
