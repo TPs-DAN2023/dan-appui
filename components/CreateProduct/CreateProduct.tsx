@@ -1,53 +1,143 @@
+import { useEffect, useState } from "react";
+import {
+  CreateCategory,
+  CreateProvider,
+  ConfirmButton,
+  CancelButton,
+  OpenDialogButton,
+  FormInput,
+} from "@/components";
+import { ICategory, IProvider } from "@/interfaces";
 
 interface CreateProductProps {
   show: boolean;
   onCancel: () => void;
 }
 
-export default function CreateProduct ({ show, onCancel }: CreateProductProps) {
+export default function CreateProduct({ show, onCancel }: CreateProductProps) {
+  const [isCreatingCategory, setIsCreatingCategory] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [isCreatingProvider, setIsCreatingProvider] = useState(false);
+  const [providers, setProviders] = useState([]);
+
+  const fetchCategories = async () => {
+    // Here you can call your API to fetch the categories
+    console.log("Fetching categories...");
+    fetch("https://jsonplaceholder.typicode.com/posts")
+      .then((response) => response.json())
+      .then((json) => setCategories(json));
+  };
+
+  const fetchProviders = async () => {
+    // Here you can call your API to fetch the providers
+    console.log("Fetching providers...");
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then((response) => response.json())
+      .then((json) => setProviders(json));
+  };
+
+  const handleSubmit = (event: any) => {
+    event.preventDefault();
+    // Here you can call your API to create the provider
+    console.log(`Producto creado!`);
+  };
+
+  const allInputsAreValid = () => {
+    // Here you can add your validation logic
+    return true;
+  };
 
   if (!show) {
     return null;
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-2xl font-bold">Crear producto</h1>
-      <div className="flex flex-col items-center justify-center">
-        <input type="text" placeholder="Nombre del producto" className="border-2 border-gray-300 p-2 m-2" />
-        <input type="text" placeholder="Descripción del producto" className="border-2 border-gray-300 p-2 m-2" />
-        
-        <div className="flex items-center">
-          <span>$</span>
-          <input type="number" placeholder="Precio del producto" className="border-2 border-gray-300 p-2 m-2" min="0" />
-        </div>
-        <input type="number" placeholder="Stock inicial" className="border-2 border-gray-300 p-2 m-2" min="0" />
-        {/* I need two list one with categories and another with providers for user to select */}
-        <div className="flex flex-col items-center justify-center">
+    <div className="relative flex flex-grow items-center justify-center">
+      <div
+        className={`flex flex-col items-center justify-center ${
+          isCreatingCategory || isCreatingProvider ? "opacity-50" : ""
+        }`}
+      >
+        <h1 className="text-2xl font-bold">Crear producto</h1>
+        <form onSubmit={handleSubmit} className="flex flex-col">
+          <FormInput type="text" placeholder="Nombre del producto" />
+          <FormInput type="text" placeholder="Descripción del producto" />
+
           <div className="flex items-center">
-            <select className="border-2 border-gray-300 p-2 m-2">
-              <option value="" hidden>Seleccione una categoría</option>
-              <option value="1">Category 1</option>
-              <option value="2">Category 2</option>
-              <option value="3">Category 3</option>
-            </select>
-            <button className="text-blue-500 p-2 m-2">+ Crear categoría</button>
+            <span>$</span>
+            <FormInput
+              type="number"
+              placeholder="Precio del producto"
+              min="0"
+            />
           </div>
-          <div className="flex items-center">
-            <select className="border-2 border-gray-300 p-2 m-2">
-              <option value="" hidden>Seleccione un proveedor</option>
-              <option value="1">Provider 1</option>
-              <option value="2">Provider 2</option>
-              <option value="3">Provider 3</option>
-            </select>
-            <button className="text-blue-500 p-2 m-2">+ Crear proveedor</button>
+          <FormInput type="number" placeholder="Stock inicial" min="0" />
+          {/* I need two list one with categories and another with providers for user to select */}
+          <div className="flex flex-col items-center justify-center">
+            <div className="flex items-center">
+              <select
+                className="border-2 border-gray-300 p-2 m-2"
+                onClick={fetchCategories}
+              >
+                <option value="" hidden>
+                  Seleccione una categoría
+                </option>
+                {categories.map((category: ICategory) => (
+                  <option key={category.id} value={category.id}>
+                    {category.nombre}
+                  </option>
+                ))}
+              </select>
+              <OpenDialogButton onClick={() => setIsCreatingCategory(true)}>
+                + Crear categoría
+              </OpenDialogButton>
+            </div>
+            <div className="flex items-center">
+              <select
+                className="border-2 border-gray-300 p-2 m-2"
+                onClick={fetchProviders}
+              >
+                <option value="" hidden>
+                  Seleccione un proveedor
+                </option>
+                {providers.map((provider: IProvider) => (
+                  <option key={provider.id} value={provider.id}>
+                    {provider.nombre} - {provider.mail}
+                  </option>
+                ))}
+              </select>
+              <OpenDialogButton onClick={() => setIsCreatingProvider(true)}>
+                + Crear proveedor
+              </OpenDialogButton>
+            </div>
           </div>
-        </div>
-        <footer className="flex gap-x-10">
-          <button onClick={onCancel} className="bg-red-500 text-white p-2 m-2 hover:bg-red-700">Cancelar</button>
-          <button className="bg-blue-500 text-white p-2 m-2 hover:bg-blue-700">Crear producto</button>
-        </footer>
+          <footer className="flex justify-around mt-5">
+            <CancelButton
+              onClick={(event: any) => {
+                event.preventDefault();
+                onCancel();
+              }}
+            >
+              Cancelar
+            </CancelButton>
+            <ConfirmButton type="submit" disabled={!allInputsAreValid()}>
+              Crear
+            </ConfirmButton>
+          </footer>
+        </form>
       </div>
+
+      {isCreatingCategory && (
+        <div className="absolute inset-0 flex items-center justify-center z-10">
+          <CreateCategory onCancel={() => setIsCreatingCategory(false)} />
+        </div>
+      )}
+
+      {isCreatingProvider && (
+        <div className="absolute inset-0 flex items-center justify-center z-10">
+          <CreateProvider onCancel={() => setIsCreatingProvider(false)} />
+        </div>
+      )}
     </div>
-  )
+  );
 }

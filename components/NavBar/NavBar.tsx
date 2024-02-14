@@ -1,12 +1,12 @@
 // import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faShop } from "@fortawesome/free-solid-svg-icons"
+import { faShop } from "@fortawesome/free-solid-svg-icons";
 import { ROUTES } from "../../constants";
 import Image from "next/image";
 import Link from "next/link";
+import { CancelButton, ConfirmButton } from "@/components";
 
-export default function NavBar () {
-
+export default function NavBar() {
   return (
     <>
       <div className="flex w-full justify-between p-2 md:p-4 items-center">
@@ -16,13 +16,19 @@ export default function NavBar () {
         </div>
         <div className="flex items-center justify-center gap-x-5">
           <Link href="/pedidos">
-            <button onClick={() => {}} className="ml-2 bg-blue-500 text-white rounded px-2 py-1 hover:bg-blue-700 transition-all">Pedidos</button>
+            <ConfirmButton onClick={() => {}} className="ml-2">
+              Pedidos
+            </ConfirmButton>
           </Link>
           <Link href="/productos">
-            <button onClick={() => {}} className="ml-2 bg-blue-500 text-white rounded px-2 py-1 hover:bg-blue-700 transition-all">Productos</button>
+            <ConfirmButton onClick={() => {}} className="ml-2">
+              Productos
+            </ConfirmButton>
           </Link>
           <Link href="/usuarios">
-            <button onClick={() => {}} className="ml-2 bg-blue-500 text-white rounded px-2 py-1 hover:bg-blue-700 transition-all">Usuarios</button>
+            <ConfirmButton onClick={() => {}} className="ml-2">
+              Usuarios
+            </ConfirmButton>
           </Link>
         </div>
         <div className="flex items-center gap-x-5">
@@ -31,23 +37,22 @@ export default function NavBar () {
               src="/usuario.webp"
               alt="Usuario"
               layout="fill"
-              objectFit="cover"
+              sizes="100vw"
               className="rounded-full"
             />
           </div>
           <span>Hola, $NAME_USER</span>
           <Link href="/">
-            <button
-              className="text-sm text-red-500 border border-red-500 rounded px-2 py-1 hover:bg-red-500 hover:text-white transition-all"
+            <CancelButton
               onClick={() => {
                 // router.push(ROUTES.LOGIN);
               }}
             >
               Salir
-            </button>
+            </CancelButton>
           </Link>
         </div>
       </div>
     </>
-  )
+  );
 }
