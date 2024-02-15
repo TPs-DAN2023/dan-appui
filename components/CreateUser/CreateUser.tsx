@@ -1,7 +1,7 @@
 import {
   CancelButton,
   ConfirmButton,
-  CreateUserType,
+  CreateUserTypePopup,
   FormInput,
   OpenDialogButton,
 } from "@/components";
@@ -72,7 +72,7 @@ export default function CreateUser({ show, onCancel }: CreateUserProps) {
 
       {isCreatingUserType && (
         <div className="absolute inset-0 flex items-center justify-center z-10">
-          <CreateUserType onCancel={() => setIsCreatingUserType(false)} />
+          <CreateUserTypePopup onCancel={() => setIsCreatingUserType(false)} />
         </div>
       )}
     </div>

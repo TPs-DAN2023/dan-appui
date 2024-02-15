@@ -24,7 +24,7 @@ export default function Item({
   onDelete,
 }: ItemProps) {
   return (
-    <div className="rounded-lg p-4 cursor-pointer">
+    <div className="rounded-lg p-4">
       <header className="flex justify-between">
         <p className="text-medium font-bold capitalize overflow-ellipsis overflow-hidden whitespace-nowrap">
           {title}

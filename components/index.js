@@ -1,12 +1,12 @@
 export { default as CancelButton } from "./CancelButton/CancelButton";
 export { default as ClearButton } from "./ClearButton/ClearButton";
 export { default as ConfirmButton } from "./ConfirmButton/ConfirmButton"
-export { default as CreateCategory } from "./CreateCategory/CreateCategory";
+export { default as CreateCategoryPopup } from "./CreateCategoryPopup/CreateCategoryPopup";
 export { default as CreateOrder } from "./CreateOrder/CreateOrder"
 export { default as CreateProduct } from "./CreateProduct/CreateProduct"
-export { default as CreateProvider } from "./CreateProvider/CreateProvider";
+export { default as CreateProviderPopup } from "./CreateProviderPopup/CreateProviderPopup";
 export { default as CreateUser } from "./CreateUser/CreateUser"
-export { default as CreateUserType } from "./CreateUserType/CreateUserType";
+export { default as CreateUserTypePopup } from "./CreateUserTypePopup/CreateUserTypePopup";
 export { default as CustomButton } from "./CustomButton/CustomButton"
 export { default as DeleteButton } from "./DeleteButton/DeleteButton";
 export { default as EditButton } from "./EditButton/EditButton";

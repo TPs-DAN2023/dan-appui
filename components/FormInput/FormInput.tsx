@@ -1,8 +1,7 @@
 interface FormInputProps {
-  label?: string;
   type?: string;
   placeholder?: string;
-  value?: string;
+  value?: string | number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
   className?: string;
@@ -11,7 +10,6 @@ interface FormInputProps {
 }
 
 export default function FormInput({
-  label,
   type = "text",
   placeholder,
   value,
@@ -22,20 +20,15 @@ export default function FormInput({
   min,
 }: FormInputProps) {
   return (
-    <div className="flex flex-col">
-      <label className="text-sm font-semibold" htmlFor={label}>
-        {label}
-      </label>
-      <input
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        required={required}
-        className={`border-2 border-gray-300 p-2 m-2 ${className}`}
-        disabled={disabled}
-        min={min}
-      />
-    </div>
+    <input
+      type={type}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      required={required}
+      className={`border-2 border-gray-300 p-2 m-2 ${className}`}
+      disabled={disabled}
+      min={min}
+    />
   );
 }

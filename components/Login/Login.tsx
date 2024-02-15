@@ -2,7 +2,7 @@
 
 import { ConfirmButton } from "@/components";
 import { useState } from "react";
-import { login } from "../../api";
+import { login } from "../../mocks";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "../../constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
