@@ -8,20 +8,24 @@ import {
   Home,
   CreateOrder,
 } from "@/components";
-import { useState } from "react";
-import { getOrdersMock } from "../../api";
+import { useEffect, useState } from "react";
+import { getOrdersMock } from "../../mocks";
 import { extractOrderAttributes } from "@/utils";
 import { IOrder } from "@/interfaces";
 
 export default function Pedidos() {
-  const [ordersResult, setOrdersResult] = useState({});
+  const [ordersResult, setOrdersResult] = useState<IOrder[]>([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getAllPedidos = async () => {
+    setIsLoading(true);
     // Fetch data from external API
-    const res = await fetch("http://localhost/api/pedidos");
-    const data = await res.json();
+    // const res = await fetch("http://localhost/api/pedidos");
+    const res = await getOrdersMock(1);
+    // const data = await res.json();
+    const data = res;
     if (!data) {
       return {
         notFound: true,
@@ -29,29 +33,40 @@ export default function Pedidos() {
     }
     console.log(data);
     setOrdersResult(data);
+    setIsLoading(false);
   };
+
+  useEffect(() => {
+    getAllPedidos();
+  }, []);
 
   return (
     <Layout>
       <div className="overflow-x-hidden overflow-y-scroll border-r min-w-[400px]">
-        <List items={getOrdersMock(1)} onClick={setSelectedItem}>
-          {/* {(item, onClick) => <OrderItem order={item} onClick={onClick} />} */}
-          {(item: IOrder, onClick: any): any => {
-            const orderAttributes = extractOrderAttributes(item);
-            return (
-              <Item
-                item={item}
-                title={orderAttributes.title}
-                body={orderAttributes.body}
-                footer={orderAttributes.footer}
-                status={orderAttributes.status}
-                onView={onClick}
-                onEdit={() => console.log("Not yet implemented!")}
-                onDelete={() => console.log("Not yet implemented!")}
-              />
-            );
-          }}
-        </List>
+        {isLoading ? (
+          <div className="flex justify-center items-center h-full">
+            <p>Cargando pedidos...</p>
+          </div>
+        ) : (
+          <List items={ordersResult} onClick={setSelectedItem}>
+            {/* {(item, onClick) => <OrderItem order={item} onClick={onClick} />} */}
+            {(item: IOrder, onClick: any): any => {
+              const orderAttributes = extractOrderAttributes(item);
+              return (
+                <Item
+                  item={item}
+                  title={orderAttributes.title}
+                  body={orderAttributes.body}
+                  footer={orderAttributes.footer}
+                  status={orderAttributes.status}
+                  onView={onClick}
+                  onEdit={() => console.log("Not yet implemented!")}
+                  onDelete={() => console.log("Not yet implemented!")}
+                />
+              );
+            }}
+          </List>
+        )}
       </div>
       <div className="flex flex-col flex-grow overflow-x-hidden overflow-y-scroll">
         <Home
