@@ -2,83 +2,66 @@
 
 import { List, ProductDetails, Layout, Home, Item } from "@/components";
 import { useEffect, useState } from "react";
-import { getProductsMock } from "../../api";
+import { getProductsMock } from "../../mocks";
 import CreateProduct from "@/components/CreateProduct/CreateProduct";
 import { extractProductAttributes } from "@/utils";
 import { IProduct } from "@/interfaces";
 
 export default function Productos() {
-  const [productsResult, setProductsResult] = useState({});
+  const [productsResult, setProductsResult] = useState<IProduct[]>([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isCreatingProduct, setIsCreatingProduct] = useState(false);
-
-  // useEffect(() => {
-  //   console.log(selectedItem)
-  // }, [selectedItem]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getAllProducts = async () => {
+    setIsLoading(true);
     // Fetch data from external API
-    const res = await fetch("http://localhost/api/productos");
-    const data = await res.json();
+    // const res = await fetch("http://localhost/api/productos");
+    const res = await getProductsMock(1);
+    // const data = await res.json();
+    const data = res;
     if (!data) {
       return {
         notFound: true,
       };
     }
-    // console.log(data);
+    console.log(data);
     setProductsResult(data);
+    setIsLoading(false);
   };
 
-  // function renderProductHome() {
-  //   if (!selectedItem) {
-  //     return (
-  //       <div className="flex flex-col flex-grow justify-center items-center gap-y-5">
-  //         <ProductHome />
-  //       </div>
-  //     );
-  // }
-
-  // return null;
-  // }
-
-  // function renderProductDetails() {
-
-  //   if (selectedItem) {
-  //     return (
-  //       <div className="overflow-x-hidden overflow-y-scroll justify-center items-center flex flex-grow">
-  //         <ProductDetails
-  //           product={selectedItem}
-  //           onClearSelectionPressed={() => setSelectedItem(null)}
-  //         />
-  //       </div>
-  //     )
-  //   }
-
-  //   return null;
-  // }
+  useEffect(() => {
+    getAllProducts();
+  }, []);
 
   return (
     <Layout>
       {/* <section className="h-screen flex flex-col"> */}
       <div className="overflow-x-hidden overflow-y-scroll border-r min-w-[400px]">
-        <List items={getProductsMock(1)} onClick={setSelectedItem}>
-          {/* {(item, onClick) => <ProductItem product={item} onClick={onClick} />} */}
-          {(item: IProduct, onClick: any): any => {
-            const productAttributes = extractProductAttributes(item);
-            return (
-              <Item
-                item={item}
-                title={productAttributes.title}
-                body={productAttributes.body}
-                footer={productAttributes.footer}
-                status={productAttributes.status}
-                onView={onClick}
-                onEdit={() => console.log("Not yet implemented!")}
-                onDelete={() => console.log("Not yet implemented!")}
-              />
-            );
-          }}
-        </List>
+        {isLoading ? (
+          <div className="flex justify-center items-center h-full">
+            <p>Cargando productos...</p>
+          </div>
+        ) : (
+          <List items={productsResult} onClick={setSelectedItem}>
+            {/* {(item, onClick) => <ProductItem product={item} onClick={onClick} />} */}
+            {(item: IProduct, onClick: any): any => {
+              const productAttributes = extractProductAttributes(item);
+              return (
+                <Item
+                  item={item}
+                  title={productAttributes.title}
+                  body={productAttributes.body}
+                  footer={productAttributes.footer}
+                  status={productAttributes.status}
+                  onView={onClick}
+                  onEdit={() => console.log("Not yet implemented!")}
+                  onDelete={() => console.log("Not yet implemented!")}
+                />
+              );
+            }}
+          </List>
+        )}
       </div>
 
       <div className="flex flex-col flex-grow overflow-x-hidden overflow-y-scroll">
@@ -97,7 +80,8 @@ export default function Productos() {
         />
         <CreateProduct
           show={!selectedItem && isCreatingProduct}
-          onCancel={() => setIsCreatingProduct(false)}
+          // onCancel={() => setIsCreatingProduct(false)}
+          onCancel={() => {}}
         />
       </div>
       {/* </section> */}
