@@ -44,7 +44,7 @@ export default function Login() {
           </header>
           <form onSubmit={handleLogin}>
             <div className="flex items-center mb-4 rounded-md bg-blue-50">
-              <FontAwesomeIcon icon={faUser} className="mx-2" />
+              <FontAwesomeIcon icon={faUser} className="mx-2 w-6 h-6" />
               <input
                 className="p-2 rounded-md flex-grow bg-blue-50"
                 id="user"
@@ -56,7 +56,7 @@ export default function Login() {
               />
             </div>
             <div className="flex items-center mb-4 rounded-md bg-blue-50">
-              <FontAwesomeIcon icon={faLock} className="mx-2" />
+              <FontAwesomeIcon icon={faLock} className="mx-2 w-6 h-6" />
               <input
                 className="p-2 rounded-md flex-grow bg-blue-50"
                 id="password"
