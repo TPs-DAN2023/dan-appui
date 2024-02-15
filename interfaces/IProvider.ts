@@ -4,6 +4,6 @@ export default interface IProvider {
   id: number;
   nombre: string;
   mail: string;
-  productos: IProduct[];
-  ordenesDeProvision: IOrder[];
+  // productos: IProduct[];
+  // ordenesDeProvision: IOrder[];
 }

@@ -1,12 +1,12 @@
 import { ICategory, IProvider, IOrderDetail } from ".";
 
 export default interface IProduct {
-  id: number;
+  id?: number;
   nombre: string;
   descripcion: string;
-  proveedor: IProvider;
+  proveedor?: IProvider | null;
   stockActual: number;
-  categoria: ICategory;
+  categoria?: ICategory | null;
   // OrdenProvisionDetalle: IOrderDetail[];
   precio: number;
 }
