@@ -1,6 +1,6 @@
 "use client";
 
-import { ConfirmButton, CustomButton } from "@/components";
+import { ConfirmButton } from "@/components";
 import { useState } from "react";
 
 export default function Test() {
@@ -44,13 +44,6 @@ export default function Test() {
         >
           Check Pedidos
         </ConfirmButton>
-      </section>
-      <span>{estadoMicroServicio && JSON.stringify(estadoMicroServicio)}</span>
-      <h1 className="flex justify-center">Prueba de redirección en el front</h1>
-      <section className="flex gap-4 justify-center mt-5">
-        <CustomButton text="ms-usuarios (TP-1)" href="/usuarios" />
-        <CustomButton text="ms-productos (TP-2)" href="/productos" />
-        <CustomButton text="ms-pedidos (TP-3)" href="/pedidos" />
       </section>
     </>
   );
