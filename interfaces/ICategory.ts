@@ -1,7 +1,7 @@
 import IProduct from "./IProduct";
 
 export default interface ICategory {
-  id: number;
+  id?: number;
   nombre: string;
   // productos: IProduct[];
 }

@@ -1,7 +1,7 @@
 import { IOrder, IProduct } from ".";
 
 export default interface IProvider {
-  id: number;
+  id?: number;
   nombre: string;
   mail: string;
   // productos: IProduct[];

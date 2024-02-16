@@ -3,7 +3,7 @@ import { IProvider, IOrderDetail, IUser } from ".";
 
 // Julio: comento las que son parte de dan-ms-productos pero no de ms-pedidos
 export interface IOrder {
-  id: string;
+  id?: string;
   // fechaGeneracion: string;
   // fechaRecepcion: string;
   fecha: string;
