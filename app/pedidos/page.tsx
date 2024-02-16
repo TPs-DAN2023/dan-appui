@@ -7,6 +7,7 @@ import {
   Layout,
   Home,
   CreateOrder,
+  Loading,
 } from "@/components";
 import { useEffect, useState } from "react";
 import { getOrdersMock } from "../../mocks";
@@ -40,33 +41,28 @@ export default function Pedidos() {
     getAllPedidos();
   }, []);
 
+  if (isLoading) return <Loading />;
+
   return (
     <Layout>
       <div className="overflow-x-hidden overflow-y-scroll border-r min-w-[400px]">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-full">
-            <p>Cargando pedidos...</p>
-          </div>
-        ) : (
-          <List items={ordersResult} onClick={setSelectedItem}>
-            {/* {(item, onClick) => <OrderItem order={item} onClick={onClick} />} */}
-            {(item: IOrder, onClick: any): any => {
-              const orderAttributes = extractOrderAttributes(item);
-              return (
-                <Item
-                  item={item}
-                  title={orderAttributes.title}
-                  body={orderAttributes.body}
-                  footer={orderAttributes.footer}
-                  status={orderAttributes.status}
-                  onView={onClick}
-                  onEdit={() => console.log("Not yet implemented!")}
-                  onDelete={() => console.log("Not yet implemented!")}
-                />
-              );
-            }}
-          </List>
-        )}
+        <List items={ordersResult} onClick={setSelectedItem}>
+          {(item: IOrder, onClick: any): any => {
+            const orderAttributes = extractOrderAttributes(item);
+            return (
+              <Item
+                item={item}
+                title={orderAttributes.title}
+                body={orderAttributes.body}
+                footer={orderAttributes.footer}
+                status={orderAttributes.status}
+                onView={onClick}
+                onEdit={() => console.log("Not yet implemented!")}
+                onDelete={() => console.log("Not yet implemented!")}
+              />
+            );
+          }}
+        </List>
       </div>
       <div className="flex flex-col flex-grow overflow-x-hidden overflow-y-scroll">
         <Home

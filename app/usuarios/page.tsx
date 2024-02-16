@@ -7,6 +7,7 @@ import {
   Home,
   Item,
   CreateUser,
+  Loading,
 } from "@/components";
 import { useEffect, useState } from "react";
 import { getUsersMock } from "../../mocks";
@@ -41,33 +42,28 @@ export default function Usuarios() {
     getAllUsers();
   }, []);
 
+  if (isLoading) return <Loading />;
+
   return (
     <Layout>
       <div className="overflow-x-hidden overflow-y-scroll border-r min-w-[400px]">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-full">
-            <p>Cargando usuarios...</p>
-          </div>
-        ) : (
-          <List items={usersResult} onClick={setSelectedItem}>
-            {/* {(item, onClick) => <UserItem user={item} onClick={onClick} />} */}
-            {(item: IUser, onClick: any): any => {
-              const userAttributes = extractUserAttributes(item);
-              return (
-                <Item
-                  item={item}
-                  title={userAttributes.title}
-                  body={userAttributes.body}
-                  footer={userAttributes.footer}
-                  status={userAttributes.status}
-                  onView={onClick}
-                  onEdit={() => console.log("Not yet implemented!")}
-                  onDelete={() => console.log("Not yet implemented!")}
-                />
-              );
-            }}
-          </List>
-        )}
+        <List items={usersResult} onClick={setSelectedItem}>
+          {(item: IUser, onClick: any): any => {
+            const userAttributes = extractUserAttributes(item);
+            return (
+              <Item
+                item={item}
+                title={userAttributes.title}
+                body={userAttributes.body}
+                footer={userAttributes.footer}
+                status={userAttributes.status}
+                onView={onClick}
+                onEdit={() => console.log("Not yet implemented!")}
+                onDelete={() => console.log("Not yet implemented!")}
+              />
+            );
+          }}
+        </List>
       </div>
 
       <div className="flex flex-col flex-grow overflow-x-hidden overflow-y-scroll">
