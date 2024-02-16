@@ -1,11 +1,16 @@
-interface ProductDetailsProps { // TODO: Change types
-  product: any,
-  onClearSelectionPressed: any,
-  show: boolean
+import { IProduct } from "@/interfaces";
+
+interface ProductDetailsProps {
+  product: IProduct;
+  onClearSelectionPressed: any;
+  show: boolean;
 }
 
-export default function ProductDetails ({ product, onClearSelectionPressed, show }: ProductDetailsProps) {
-  
+export default function ProductDetails({
+  product,
+  onClearSelectionPressed,
+  show,
+}: ProductDetailsProps) {
   if (!show) {
     return null;
   }

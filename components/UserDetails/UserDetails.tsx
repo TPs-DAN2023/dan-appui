@@ -1,11 +1,16 @@
-interface UserDetailsProps { // TODO: Change types
-  user: any,
-  onClearSelectionPressed: any,
-  show: boolean
+import { IUser } from "@/interfaces";
+
+interface UserDetailsProps {
+  user: IUser;
+  onClearSelectionPressed: any;
+  show: boolean;
 }
 
-export default function UserDetails ({ user, onClearSelectionPressed, show }: UserDetailsProps) {
-
+export default function UserDetails({
+  user,
+  onClearSelectionPressed,
+  show,
+}: UserDetailsProps) {
   if (!show) {
     return null;
   }
