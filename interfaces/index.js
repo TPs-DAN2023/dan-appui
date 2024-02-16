@@ -5,3 +5,6 @@ export { default as IUserType } from './IUserType';
 export { default as ICategory } from './ICategory';
 export { default as IProvider } from './IProvider';
 export { default as IOrderDetail } from './IOrderDetail';
+export { default as IItem } from './IItem';
+export { default as IList } from './IList';
+export { default as IIdentifiable } from './IIdentifiable';

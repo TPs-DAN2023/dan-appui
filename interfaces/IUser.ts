@@ -1,9 +1,9 @@
-import { IUserType } from './IUserType';
+import { IUserType } from '.';
 
 export default interface IUser {
   id?: number;
   userName: string;
   password: string;
   correoElectronico: string;
-  tipoUsuario: IUserType;
+  tipoUsuario?: IUserType | null;
 }

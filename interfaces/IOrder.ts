@@ -2,7 +2,7 @@ import { OrderState } from "@/enums/OrderState";
 import { IProvider, IOrderDetail, IUser } from ".";
 
 // Julio: comento las que son parte de dan-ms-productos pero no de ms-pedidos
-export interface IOrder {
+export default interface IOrder {
   id?: string;
   // fechaGeneracion: string;
   // fechaRecepcion: string;
