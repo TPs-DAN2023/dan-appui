@@ -1,19 +1,9 @@
 "use client";
 
+import { IItem } from "@/interfaces";
 import { ViewButton, EditButton, DeleteButton } from "../index";
 
-interface ItemProps {
-  item: any;
-  title: string;
-  body: string[];
-  footer: string;
-  status?: string;
-  onView: (item: any) => void;
-  onEdit: (item: any) => void;
-  onDelete: (item: any) => void;
-}
-
-export default function Item({
+export default function Item<T>({
   item,
   title,
   body,
@@ -22,7 +12,7 @@ export default function Item({
   onView,
   onEdit,
   onDelete,
-}: ItemProps) {
+}: IItem<T>) {
   return (
     <div className="rounded-lg p-4">
       <header className="flex justify-between">
@@ -30,7 +20,7 @@ export default function Item({
           {title}
         </p>
         <div className="flex gap-x-3">
-          <ViewButton onClick={() => onView(item)} />
+          {onView && <ViewButton onClick={() => onView(item)} />}
           <EditButton onClick={() => onEdit(item)} />
           <DeleteButton onClick={() => onDelete(item)} />
         </div>

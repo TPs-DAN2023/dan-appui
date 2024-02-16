@@ -1,7 +1,7 @@
 import { IProduct } from "@/interfaces";
 
 interface ProductDetailsProps {
-  product: IProduct;
+  product?: IProduct;
   onClearSelectionPressed: any;
   show: boolean;
 }

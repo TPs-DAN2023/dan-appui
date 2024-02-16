@@ -1,6 +1,6 @@
 import { CancelButton, ConfirmButton, FormInput } from "@/components";
 import { ICategory } from "@/interfaces";
-import addCategoryMock from "@/mocks/addCategoryMock";
+import { addCategoryMock } from "@/mocks";
 import { useState } from "react";
 
 interface CreateCategoryProps {
@@ -23,12 +23,12 @@ export default function CreateCategory({ onCancel }: CreateCategoryProps) {
 
   const handleSubmit = (event: any) => {
     event.preventDefault();
-    setIsCreatingCategory(true); // Set isCreatingCategory to true while waiting for the category to be created
+    setIsCreatingCategory(true);
     // Here you can call your API to create the category
     console.log("Categoría creada!");
     addCategoryMock(category).then((res) => {
       console.log(res);
-      setIsCreatingCategory(false); // Set isCreatingCategory back to false after the category is created
+      setIsCreatingCategory(false);
       handleCancel(event);
     });
   };

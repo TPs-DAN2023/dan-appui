@@ -1,4 +1,6 @@
 import { CancelButton, ConfirmButton, FormInput } from "@/components";
+import { IUserType } from "@/interfaces";
+import { addUserTypeMock } from "@/mocks";
 import { useState } from "react";
 
 interface CreateUserTypeProps {
@@ -6,12 +8,28 @@ interface CreateUserTypeProps {
 }
 
 export default function CreateUserType({ onCancel }: CreateUserTypeProps) {
-  const [userTypeName, setUserTypeName] = useState("");
+  const initialUserTypeState = {
+    tipo: "",
+  };
+  const [userType, setUserType] = useState<IUserType>(initialUserTypeState);
+  const [isCreatingUserType, setIsCreatingUserType] = useState(false);
+
+  const handleCancel = (event: any) => {
+    event.preventDefault();
+    setUserType(initialUserTypeState);
+    onCancel();
+  };
 
   const handleSubmit = (event: any) => {
     event.preventDefault();
+    setIsCreatingUserType(true);
     // Here you can call your API to create the userType
-    console.log(`Tipo de usuario creado: ${userTypeName}!`);
+    console.log("Tipo de usuario creado!");
+    addUserTypeMock(userType).then((res) => {
+      console.log(res);
+      setIsCreatingUserType(false);
+      handleCancel(event);
+    });
   };
 
   return (
@@ -22,19 +40,17 @@ export default function CreateUserType({ onCancel }: CreateUserTypeProps) {
           <FormInput
             type="text"
             placeholder="Nombre del tipo usuario"
-            value={userTypeName}
-            onChange={(e) => setUserTypeName(e.target.value)}
+            value={userType.tipo}
+            required
+            onChange={(e) => setUserType({ ...userType, tipo: e.target.value })}
           />
           <div className="flex justify-around mt-4">
-            <CancelButton
-              onClick={(event: any) => {
-                event.preventDefault();
-                onCancel();
-              }}
-            >
+            <CancelButton type="button" onClick={handleCancel}>
               Cancelar
             </CancelButton>
-            <ConfirmButton type="submit">Crear</ConfirmButton>
+            <ConfirmButton type="submit" disabled={isCreatingUserType}>
+              {isCreatingUserType ? "Creando..." : "Crear"}
+            </ConfirmButton>
           </div>
         </form>
       </div>

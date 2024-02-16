@@ -1,4 +1,4 @@
-import { IOrder } from "@/interfaces/IOrder";
+import { IOrder } from "@/interfaces";
 import { ClearButton } from "..";
 
 interface OrderDetailsProps {

@@ -14,10 +14,15 @@ import ConfirmCancelPopup from "../ConfirmCancelPopup/ConfirmCancelPopup";
 interface CreateProductProps {
   show: boolean;
   onCancel: () => void;
+  product?: IProduct;
 }
 
-export default function CreateProduct({ show, onCancel }: CreateProductProps) {
-  const initialProductState = {
+export default function CreateProduct({
+  show,
+  onCancel,
+  product: productToUpdate,
+}: CreateProductProps) {
+  const emptyProduct = {
     nombre: "",
     descripcion: "",
     precio: 0,
@@ -25,8 +30,13 @@ export default function CreateProduct({ show, onCancel }: CreateProductProps) {
     categoria: null,
     proveedor: null,
   };
+  const [product, setProduct] = useState<IProduct>();
 
-  const [product, setProduct] = useState<IProduct>(initialProductState);
+  useEffect(() => {
+    // See why this works
+    setProduct(productToUpdate || emptyProduct);
+  }, [productToUpdate]);
+
   const [isCreatingCategory, setIsCreatingCategory] = useState(false);
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [isCreatingProvider, setIsCreatingProvider] = useState(false);
@@ -68,7 +78,7 @@ export default function CreateProduct({ show, onCancel }: CreateProductProps) {
 
   const handleCancel = (event: any) => {
     event.preventDefault();
-    setProduct(initialProductState);
+    setProduct(emptyProduct);
     setIsCanceling(false);
     setIsCreatingCategory(false);
     setIsCreatingProvider(false);
@@ -79,7 +89,7 @@ export default function CreateProduct({ show, onCancel }: CreateProductProps) {
     event.preventDefault();
     setIsCreatingProduct(true);
     // Here you can call your API to create the provider
-    console.log(`Producto creado!`);
+    console.log(`Producto ${productToUpdate ? "actualizado" : "creado"}!`);
     addProductMock(product).then((data) => {
       console.log(data);
       setIsCreatingProduct(false);
@@ -89,10 +99,12 @@ export default function CreateProduct({ show, onCancel }: CreateProductProps) {
 
   const allInputsAreValid = () => {
     return (
-      product.nombre.length > 0 &&
-      product.descripcion.length > 0 &&
-      product.precio > 0 &&
+      product.nombre.length < 50 &&
+      product.descripcion.length < 100 &&
+      product.precio >= 0 &&
+      product.precio <= 10000 &&
       product.stockActual >= 0 &&
+      product.stockActual <= 1000 &&
       product.categoria &&
       product.proveedor
     );
@@ -117,12 +129,14 @@ export default function CreateProduct({ show, onCancel }: CreateProductProps) {
             type="text"
             placeholder="Nombre del producto"
             value={product.nombre}
+            required
             onChange={(e) => setProduct({ ...product, nombre: e.target.value })}
           />
           <FormInput
             type="text"
             placeholder="Descripción del producto"
             value={product.descripcion}
+            required
             onChange={(e) =>
               setProduct({ ...product, descripcion: e.target.value })
             }
@@ -136,6 +150,7 @@ export default function CreateProduct({ show, onCancel }: CreateProductProps) {
               min="0"
               className="flex-grow"
               value={product.precio}
+              required
               onChange={(e) =>
                 setProduct({ ...product, precio: parseInt(e.target.value) })
               }
@@ -146,6 +161,7 @@ export default function CreateProduct({ show, onCancel }: CreateProductProps) {
             placeholder="Stock inicial"
             min="0"
             value={product.stockActual}
+            required
             onChange={(e) =>
               setProduct({ ...product, stockActual: parseInt(e.target.value) })
             }
@@ -155,8 +171,9 @@ export default function CreateProduct({ show, onCancel }: CreateProductProps) {
             <div className="flex items-center">
               <select
                 className="border-2 border-gray-300 p-2 m-2"
-                onClick={fetchCategories}
+                onFocus={fetchCategories}
                 value={product.categoria?.id}
+                required
                 onChange={(e) =>
                   setProduct({
                     ...product,
@@ -185,8 +202,9 @@ export default function CreateProduct({ show, onCancel }: CreateProductProps) {
             <div className="flex items-center">
               <select
                 className="border-2 border-gray-300 p-2 m-2"
-                onClick={fetchProviders}
+                onFocus={fetchProviders}
                 value={product.proveedor?.id}
+                required
                 onChange={(e) =>
                   setProduct({
                     ...product,

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CancelButton, ConfirmButton, FormInput } from "@/components";
-import addProviderMock from "@/mocks/addProviderMock";
+import { addProviderMock } from "@/mocks";
 import { IProvider } from "@/interfaces";
 
 interface CreateProviderProps {

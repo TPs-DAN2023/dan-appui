@@ -1,13 +1,13 @@
 interface ConfirmDeletePopupProps {
   show: boolean;
-  onConfirm: VoidFunction;
+  onDelete: VoidFunction;
   onCancel: VoidFunction;
   message: string;
 }
 
 export default function ConfirmDeletePopup({
   show,
-  onConfirm,
+  onDelete,
   onCancel,
   message,
 }: ConfirmDeletePopupProps) {
@@ -23,8 +23,8 @@ export default function ConfirmDeletePopup({
           <button className="btn btn-secondary mr-2" onClick={() => onCancel()}>
             Cancelar
           </button>
-          <button className="btn btn-primary" onClick={() => onConfirm()}>
-            Confirmar
+          <button className="btn btn-primary" onClick={() => onDelete()}>
+            Eliminar
           </button>
         </div>
       </div>

@@ -18,12 +18,10 @@ export { default as Login } from "./Login/Login";
 export { default as NavBar } from "./NavBar/NavBar";
 export { default as OpenDialogButton } from "./OpenDialogButton/OpenDialogButton";
 export { default as OrderDetails } from "./OrderDetails/OrderDetails";
-export { default as OrderItem } from "./OrderItem/OrderItem";
 export { default as ProductDetails } from "./ProductDetails/ProductDetails"
-export { default as ProductItem } from "./ProductItem/ProductItem";
 export { default as UserDetails } from "./UserDetails/UserDetails"
-export { default as UserItem } from "./UserItem/UserItem";
 export { default as ViewButton } from "./ViewButton/ViewButton";
 export { default as Home } from "./Home/Home";
 export { default as FormInput } from "./FormInput/FormInput";
 export { default as ConfirmDeletePopup } from "./ConfirmDeletePopup/ConfirmDeletePopup";
+export { default as ConfirmCancelPopup } from "./ConfirmCancelPopup/ConfirmCancelPopup";
