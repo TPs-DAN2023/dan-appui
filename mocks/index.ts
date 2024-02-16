@@ -1,7 +1,13 @@
-export { default as login } from './loginMock';
+export { default as addCategoryMock } from './addCategoryMock';
+export { default as addOrderMock } from './addOrderMock';
+export { default as addProductMock } from './addProductMock';
+export { default as addProviderMock } from './addProviderMock';
+export { default as addUserMock } from './addUserMock';
+export { default as addUserTypeMock } from './addUserTypeMock';
+export { default as getCategoriesMock } from './getCategoriesMock';
 export { default as getOrdersMock } from './getOrdersMock';
 export { default as getProductsMock } from './getProductsMock';
-export { default as getUsersMock } from './getUsersMock';
-export { default as getCategoriesMock } from './getCategoriesMock';
 export { default as getProvidersMock } from './getProvidersMock';
-export { default as addProductMock } from './addProductMock';
+export { default as getUsersMock } from './getUsersMock';
+export { default as getUserTypesMock } from './getUserTypesMock';
+export { default as login } from './loginMock';
