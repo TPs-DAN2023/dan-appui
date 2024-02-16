@@ -26,3 +26,4 @@ export { default as UserItem } from "./UserItem/UserItem";
 export { default as ViewButton } from "./ViewButton/ViewButton";
 export { default as Home } from "./Home/Home";
 export { default as FormInput } from "./FormInput/FormInput";
+export { default as ConfirmDeletePopup } from "./ConfirmDeletePopup/ConfirmDeletePopup";

@@ -32,6 +32,7 @@ export default function CreateProduct({ show, onCancel }: CreateProductProps) {
   const [isCreatingProvider, setIsCreatingProvider] = useState(false);
   const [providers, setProviders] = useState<IProvider[]>([]);
   const [isCanceling, setIsCanceling] = useState(false);
+  const [isCreatingProduct, setIsCreatingProduct] = useState(false);
 
   const fetchCategories = async () => {
     // Here you can call your API to fetch the providers
@@ -68,16 +69,21 @@ export default function CreateProduct({ show, onCancel }: CreateProductProps) {
   const handleCancel = (event: any) => {
     event.preventDefault();
     setProduct(initialProductState);
+    setIsCanceling(false);
+    setIsCreatingCategory(false);
+    setIsCreatingProvider(false);
     onCancel();
   };
 
   const handleSubmit = (event: any) => {
     event.preventDefault();
+    setIsCreatingProduct(true);
     // Here you can call your API to create the provider
     console.log(`Producto creado!`);
     addProductMock(product).then((data) => {
       console.log(data);
-      onCancel();
+      setIsCreatingProduct(false);
+      handleCancel(event);
     });
   };
 
@@ -92,6 +98,8 @@ export default function CreateProduct({ show, onCancel }: CreateProductProps) {
     );
   };
 
+  const isPopupOpen = isCreatingCategory || isCreatingProvider || isCanceling;
+
   if (!show) {
     return null;
   }
@@ -100,7 +108,7 @@ export default function CreateProduct({ show, onCancel }: CreateProductProps) {
     <div className="relative flex flex-grow items-center justify-center">
       <div
         className={`flex flex-col items-center justify-center ${
-          isCreatingCategory || isCreatingProvider ? "opacity-50" : ""
+          isPopupOpen ? "opacity-50" : ""
         }`}
       >
         <h1 className="text-2xl font-bold">Crear producto</h1>
@@ -167,7 +175,10 @@ export default function CreateProduct({ show, onCancel }: CreateProductProps) {
                   </option>
                 ))}
               </select>
-              <OpenDialogButton onClick={() => setIsCreatingCategory(true)}>
+              <OpenDialogButton
+                type="button"
+                onClick={() => setIsCreatingCategory(true)}
+              >
                 + Crear categoría
               </OpenDialogButton>
             </div>
@@ -194,7 +205,10 @@ export default function CreateProduct({ show, onCancel }: CreateProductProps) {
                   </option>
                 ))}
               </select>
-              <OpenDialogButton onClick={() => setIsCreatingProvider(true)}>
+              <OpenDialogButton
+                type="button"
+                onClick={() => setIsCreatingProvider(true)}
+              >
                 + Crear proveedor
               </OpenDialogButton>
             </div>
@@ -203,8 +217,11 @@ export default function CreateProduct({ show, onCancel }: CreateProductProps) {
             <CancelButton type="button" onClick={() => setIsCanceling(true)}>
               Cancelar
             </CancelButton>
-            <ConfirmButton type="submit" disabled={!allInputsAreValid()}>
-              Crear
+            <ConfirmButton
+              type="submit"
+              disabled={!allInputsAreValid() || isCreatingProduct}
+            >
+              {isCreatingProduct ? "Creando..." : "Crear"}
             </ConfirmButton>
           </footer>
         </form>

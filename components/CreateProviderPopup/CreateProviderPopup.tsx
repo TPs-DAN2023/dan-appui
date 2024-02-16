@@ -1,17 +1,37 @@
 import { useState } from "react";
 import { CancelButton, ConfirmButton, FormInput } from "@/components";
+import addProviderMock from "@/mocks/addProviderMock";
+import { IProvider } from "@/interfaces";
 
 interface CreateProviderProps {
   onCancel: () => void;
 }
 
 export default function CreateProvider({ onCancel }: CreateProviderProps) {
-  const [providerName, setProviderName] = useState("");
+  const initialProviderState = {
+    nombre: "",
+    mail: "",
+  };
+
+  const [provider, setProvider] = useState<IProvider>(initialProviderState);
+  const [isCreatingProvider, setIsCreatingProvider] = useState(false);
+
+  const handleCancel = (event: any) => {
+    event.preventDefault();
+    setProvider(initialProviderState);
+    onCancel();
+  };
 
   const handleSubmit = (event: any) => {
     event.preventDefault();
+    setIsCreatingProvider(true);
     // Here you can call your API to create the provider
-    console.log(`Proveedor creado: ${providerName}!`);
+    console.log("Proveedor creado!");
+    addProviderMock(provider).then((res) => {
+      console.log(res);
+      setIsCreatingProvider(false);
+      handleCancel(event);
+    });
   };
 
   return (
@@ -22,20 +42,24 @@ export default function CreateProvider({ onCancel }: CreateProviderProps) {
           <FormInput
             type="text"
             placeholder="Nombre del proveedor"
-            value={providerName}
-            onChange={(e) => setProviderName(e.target.value)}
+            value={provider.nombre}
+            required
+            onChange={(e) =>
+              setProvider({ ...provider, nombre: e.target.value })
+            }
           />
-          <FormInput type="email" placeholder="Correo electrónico" />
+          <FormInput
+            type="email"
+            placeholder="Mail del proveedor"
+            value={provider.mail}
+            required
+            onChange={(e) => setProvider({ ...provider, mail: e.target.value })}
+          />
           <div className="flex justify-around mt-4">
-            <CancelButton
-              onClick={(event: any) => {
-                event.preventDefault();
-                onCancel();
-              }}
-            >
-              Cancelar
-            </CancelButton>
-            <ConfirmButton type="submit">Crear</ConfirmButton>
+            <CancelButton onClick={handleCancel}>Cancelar</CancelButton>
+            <ConfirmButton type="submit" disabled={isCreatingProvider}>
+              {isCreatingProvider ? "Creando..." : "Crear"}
+            </ConfirmButton>
           </div>
         </form>
       </div>
