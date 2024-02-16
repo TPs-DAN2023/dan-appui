@@ -30,7 +30,7 @@ export default function CreateProduct({
     categoria: null,
     proveedor: null,
   };
-  const [product, setProduct] = useState<IProduct>();
+  const [product, setProduct] = useState<IProduct>(emptyProduct);
 
   useEffect(() => {
     // See why this works
