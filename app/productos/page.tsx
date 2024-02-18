@@ -14,11 +14,13 @@ import CreateOrUpdateProduct from "@/components/CreateOrUpdateProduct/CreateOrUp
 import { extractProductAttributes } from "@/utils";
 import { IProduct } from "@/interfaces";
 import { faBasketShopping } from "@fortawesome/free-solid-svg-icons";
+import AddToCartPopup from "@/components/AddToCartPopup/AddToCartPopup";
 
 export default function Productos() {
   const [productsResult, setProductsResult] = useState<IProduct[]>([]);
   const [selectedItem, setSelectedItem] = useState<IProduct>();
   const [isCreatingProduct, setIsCreatingProduct] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [isUpdatingProduct, setIsUpdatingProduct] = useState(false);
   const [isDeletingProduct, setIsDeletingProduct] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -44,7 +46,7 @@ export default function Productos() {
     getAllProducts();
   }, []);
 
-  const isPopupOpen = isDeletingProduct;
+  const isPopupOpen = isDeletingProduct || isAddingToCart;
 
   if (isLoading) return <Loading />;
 
@@ -54,6 +56,10 @@ export default function Productos() {
         <div className="overflow-x-hidden overflow-y-scroll border-r min-w-[400px]">
           <List<IProduct>
             items={productsResult}
+            onAddToCart={(item) => {
+              setSelectedItem(item as IProduct);
+              setIsAddingToCart(true);
+            }}
             onEdit={(item) => {
               setSelectedItem(item as IProduct);
               setIsUpdatingProduct(true);
@@ -62,7 +68,7 @@ export default function Productos() {
               setSelectedItem(item as IProduct);
               setIsDeletingProduct(true);
             }}
-            renderItem={(item, onEdit, onDelete) => {
+            renderItem={(item, onDelete, onAddToCart, onEdit) => {
               const productAttributes = extractProductAttributes(
                 item as IProduct
               );
@@ -73,8 +79,9 @@ export default function Productos() {
                   body={productAttributes.body}
                   footer={productAttributes.footer}
                   status={productAttributes.status}
-                  onEdit={() => onEdit(item)}
                   onDelete={() => onDelete(item)}
+                  onAddToCart={() => onAddToCart && onAddToCart(item)}
+                  onEdit={() => onEdit && onEdit(item)}
                 />
               );
             }}
@@ -117,6 +124,12 @@ export default function Productos() {
             onDelete={() => {}}
             onCancel={() => setIsDeletingProduct(false)}
             messageTitle={`¿Está seguro que desea eliminar el producto seleccionado (id=${selectedItem?.id})?`}
+          />
+          <AddToCartPopup
+            show={isAddingToCart}
+            product={selectedItem}
+            onCancel={() => setIsAddingToCart(false)}
+            onAddToCart={() => {}}
           />
         </div>
       )}
