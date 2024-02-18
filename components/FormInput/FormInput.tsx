@@ -6,7 +6,8 @@ interface FormInputProps {
   required?: boolean;
   className?: string;
   disabled?: boolean;
-  min?: string;
+  min?: string | number;
+  max?: string | number;
 }
 
 export default function FormInput({
