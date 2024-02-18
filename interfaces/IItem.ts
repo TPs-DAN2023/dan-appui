@@ -4,7 +4,8 @@ export default interface IItem<T> {
   body: string[];
   footer: string;
   status?: string;
-  onView?: (item: T) => void;
-  onEdit: (item: T) => void;
   onDelete: (item: T) => void;
+  onAddToCart?: (item: T) => void;
+  onView?: (item: T) => void;
+  onEdit?: (item: T) => void;
 }
