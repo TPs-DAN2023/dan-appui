@@ -8,22 +8,38 @@ import {
 } from "@/components";
 import { IUser, IUserType } from "@/interfaces";
 import { addUserMock, getUserTypesMock } from "@/mocks";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-interface CreateUserProps {
+interface CreateOrUpdateUserProps {
   show: boolean;
   onCancel: () => void;
+  user?: IUser;
 }
 
-export default function CreateUser({ show, onCancel }: CreateUserProps) {
-  const initialUserState = {
-    userName: "",
-    password: "",
-    correoElectronico: "",
-    tipoUsuario: null,
-  };
+const emptyUser = {
+  userName: "",
+  password: "",
+  correoElectronico: "",
+  tipoUsuario: null,
+};
 
-  const [user, setUser] = useState<IUser>(initialUserState);
+export default function CreateOrUpdateUser({
+  show,
+  onCancel,
+  user: userToUpdate,
+}: CreateOrUpdateUserProps) {
+  const [user, setUser] = useState<IUser>(emptyUser);
+
+  useEffect(() => {
+    if (userToUpdate) {
+      fetchUserTypes();
+      setUser(userToUpdate);
+    } else {
+      setUser(emptyUser);
+      setUserTypes([]);
+    }
+  }, [userToUpdate, show]);
+
   const [isCreatingUserType, setIsCreatingUserType] = useState(false);
   const [userTypes, setUserTypes] = useState<IUserType[]>([]);
   const [isCanceling, setIsCanceling] = useState(false);
@@ -45,11 +61,12 @@ export default function CreateUser({ show, onCancel }: CreateUserProps) {
     setUserTypes(data);
   };
 
-  const handleCancel = (event: any) => {
+  const handleCancel = (event: React.MouseEvent) => {
     event.preventDefault();
-    setUser(initialUserState);
+    setUser(emptyUser);
     setIsCanceling(false);
     setIsCreatingUserType(false);
+    console.log("Cancelando...");
     onCancel();
   };
 
@@ -60,7 +77,7 @@ export default function CreateUser({ show, onCancel }: CreateUserProps) {
     addUserMock(user).then((res) => {
       console.log(res);
       setIsCreatingUser(false);
-      onCancel();
+      handleCancel(event);
     });
   };
 
@@ -115,8 +132,8 @@ export default function CreateUser({ show, onCancel }: CreateUserProps) {
           <div className="flex items-center justify-center">
             <select
               className="border-2 border-gray-300 p-2 m-2"
-              onFocus={fetchUserTypes}
               value={user.tipoUsuario?.id}
+              onFocus={fetchUserTypes}
               required
               onChange={(e) =>
                 setUser({
@@ -144,30 +161,42 @@ export default function CreateUser({ show, onCancel }: CreateUserProps) {
             </OpenDialogButton>
           </div>
           <footer className="flex justify-around mt-5">
-            <CancelButton type="button" onClick={() => setIsCanceling(true)}>
+            <CancelButton
+              type="button"
+              onClick={(event) =>
+                userToUpdate ? handleCancel(event) : setIsCanceling(true)
+              }
+            >
               Cancelar
             </CancelButton>
             <ConfirmButton
               type="submit"
               disabled={!allInputsAreValid() || isCreatingUser}
             >
-              {isCreatingUser ? "Creando..." : "Crear"}
+              {userToUpdate
+                ? isCreatingUser
+                  ? "Actualizando..."
+                  : "Actualizar"
+                : isCreatingUser
+                ? "Creando..."
+                : "Crear"}
             </ConfirmButton>
           </footer>
         </form>
       </div>
 
-      {isCreatingUserType && (
+      {isPopupOpen && (
         <div className="absolute inset-0 flex items-center justify-center z-10">
-          <CreateUserTypePopup onCancel={() => setIsCreatingUserType(false)} />
-        </div>
-      )}
+          <CreateUserTypePopup
+            show={isCreatingUserType}
+            onCancel={() => setIsCreatingUserType(false)}
+          />
 
-      {isCanceling && (
-        <div className="absolute inset-0 flex items-center justify-center z-10">
           <ConfirmCancelPopup
+            show={isCanceling}
             onCancel={() => setIsCanceling(false)}
             onConfirm={handleCancel}
+            messageTitle="¿Desea cancelar la creación del usuario?"
           />
         </div>
       )}

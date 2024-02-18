@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   CreateCategoryPopup,
   CreateProviderPopup,
@@ -11,31 +11,41 @@ import { getProvidersMock, getCategoriesMock, addProductMock } from "@/mocks";
 import { ICategory, IProduct, IProvider } from "@/interfaces";
 import ConfirmCancelPopup from "../ConfirmCancelPopup/ConfirmCancelPopup";
 
-interface CreateProductProps {
+interface CreateOrUpdateProductProps {
   show: boolean;
   onCancel: () => void;
   product?: IProduct;
 }
 
-export default function CreateProduct({
+const emptyProduct = {
+  nombre: "",
+  descripcion: "",
+  precio: 0,
+  stockActual: 0,
+  categoria: null,
+  proveedor: null,
+};
+
+export default function CreateOrUpdateProduct({
   show,
   onCancel,
   product: productToUpdate,
-}: CreateProductProps) {
-  const emptyProduct = {
-    nombre: "",
-    descripcion: "",
-    precio: 0,
-    stockActual: 0,
-    categoria: null,
-    proveedor: null,
-  };
+}: CreateOrUpdateProductProps) {
   const [product, setProduct] = useState<IProduct>(emptyProduct);
 
   useEffect(() => {
-    // See why this works
-    setProduct(productToUpdate || emptyProduct);
-  }, [productToUpdate]);
+    if (productToUpdate) {
+      console.log("productToUpdate");
+      fetchCategories();
+      fetchProviders();
+      setProduct(productToUpdate);
+    } else {
+      console.log("emptyProduct");
+      setProduct(emptyProduct);
+      setCategories([]);
+      setProviders([]);
+    }
+  }, [productToUpdate, show]);
 
   const [isCreatingCategory, setIsCreatingCategory] = useState(false);
   const [categories, setCategories] = useState<ICategory[]>([]);
@@ -76,12 +86,13 @@ export default function CreateProduct({
     setProviders(data);
   };
 
-  const handleCancel = (event: any) => {
+  const handleCancel = (event: React.MouseEvent) => {
     event.preventDefault();
     setProduct(emptyProduct);
     setIsCanceling(false);
     setIsCreatingCategory(false);
     setIsCreatingProvider(false);
+    console.log("Cancelando...");
     onCancel();
   };
 
@@ -171,8 +182,8 @@ export default function CreateProduct({
             <div className="flex items-center">
               <select
                 className="border-2 border-gray-300 p-2 m-2"
-                onFocus={fetchCategories}
                 value={product.categoria?.id}
+                onFocus={fetchCategories}
                 required
                 onChange={(e) =>
                   setProduct({
@@ -202,8 +213,8 @@ export default function CreateProduct({
             <div className="flex items-center">
               <select
                 className="border-2 border-gray-300 p-2 m-2"
-                onFocus={fetchProviders}
                 value={product.proveedor?.id}
+                onFocus={fetchProviders}
                 required
                 onChange={(e) =>
                   setProduct({
@@ -232,36 +243,45 @@ export default function CreateProduct({
             </div>
           </div>
           <footer className="flex justify-around mt-5">
-            <CancelButton type="button" onClick={() => setIsCanceling(true)}>
+            <CancelButton
+              type="button"
+              onClick={(event) =>
+                productToUpdate ? handleCancel(event) : setIsCanceling(true)
+              }
+            >
               Cancelar
             </CancelButton>
             <ConfirmButton
               type="submit"
               disabled={!allInputsAreValid() || isCreatingProduct}
             >
-              {isCreatingProduct ? "Creando..." : "Crear"}
+              {productToUpdate
+                ? isCreatingProduct
+                  ? "Actualizando..."
+                  : "Actualizar"
+                : isCreatingProduct
+                ? "Creando..."
+                : "Crear"}
             </ConfirmButton>
           </footer>
         </form>
       </div>
 
-      {isCreatingCategory && (
+      {isPopupOpen && (
         <div className="absolute inset-0 flex items-center justify-center z-10">
-          <CreateCategoryPopup onCancel={() => setIsCreatingCategory(false)} />
-        </div>
-      )}
-
-      {isCreatingProvider && (
-        <div className="absolute inset-0 flex items-center justify-center z-10">
-          <CreateProviderPopup onCancel={() => setIsCreatingProvider(false)} />
-        </div>
-      )}
-
-      {isCanceling && (
-        <div className="absolute inset-0 flex items-center justify-center z-10">
+          <CreateCategoryPopup
+            show={isCreatingCategory}
+            onCancel={() => setIsCreatingCategory(false)}
+          />
+          <CreateProviderPopup
+            show={isCreatingProvider}
+            onCancel={() => setIsCreatingProvider(false)}
+          />
           <ConfirmCancelPopup
+            show={isCanceling}
             onCancel={() => setIsCanceling(false)}
             onConfirm={handleCancel}
+            messageTitle="¿Desea cancelar la creación del producto?"
           />
         </div>
       )}
