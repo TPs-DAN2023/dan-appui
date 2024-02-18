@@ -4,10 +4,14 @@ import { addProviderMock } from "@/mocks";
 import { IProvider } from "@/interfaces";
 
 interface CreateProviderProps {
+  show: boolean;
   onCancel: () => void;
 }
 
-export default function CreateProvider({ onCancel }: CreateProviderProps) {
+export default function CreateProvider({
+  show,
+  onCancel,
+}: CreateProviderProps) {
   const initialProviderState = {
     nombre: "",
     mail: "",
@@ -33,6 +37,10 @@ export default function CreateProvider({ onCancel }: CreateProviderProps) {
       handleCancel(event);
     });
   };
+
+  if (!show) {
+    return null;
+  }
 
   return (
     <div className="fixed flex items-center justify-center z-10">

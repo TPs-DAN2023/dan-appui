@@ -4,10 +4,14 @@ import { addUserTypeMock } from "@/mocks";
 import { useState } from "react";
 
 interface CreateUserTypeProps {
+  show: boolean;
   onCancel: () => void;
 }
 
-export default function CreateUserType({ onCancel }: CreateUserTypeProps) {
+export default function CreateUserType({
+  show,
+  onCancel,
+}: CreateUserTypeProps) {
   const initialUserTypeState = {
     tipo: "",
   };
@@ -31,6 +35,10 @@ export default function CreateUserType({ onCancel }: CreateUserTypeProps) {
       handleCancel(event);
     });
   };
+
+  if (!show) {
+    return null;
+  }
 
   return (
     <div className="fixed flex items-center justify-center z-10">

@@ -2,7 +2,7 @@ import { IOrder } from "@/interfaces";
 import { ClearButton } from "..";
 
 interface OrderDetailsProps {
-  order: IOrder;
+  order?: IOrder;
   onClearSelectionPressed: VoidFunction;
   show: boolean;
 }

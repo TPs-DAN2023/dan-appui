@@ -1,31 +1,30 @@
+import { ConfirmButton, CancelButton } from "@/components";
+
 interface ConfirmDeletePopupProps {
   show: boolean;
   onDelete: VoidFunction;
   onCancel: VoidFunction;
-  message: string;
+  messageTitle: string;
 }
 
 export default function ConfirmDeletePopup({
   show,
   onDelete,
   onCancel,
-  message,
+  messageTitle,
 }: ConfirmDeletePopupProps) {
   if (!show) {
     return null;
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-6">
-        <p className="text-lg">{message}</p>
-        <div className="flex justify-end mt-4">
-          <button className="btn btn-secondary mr-2" onClick={() => onCancel()}>
-            Cancelar
-          </button>
-          <button className="btn btn-primary" onClick={() => onDelete()}>
-            Eliminar
-          </button>
+    <div className="fixed flex items-center justify-center z-10">
+      <div className="bg-white p-4 rounded shadow-lg">
+        <h2 className="text-xl font-bold mb-4">{messageTitle}</h2>
+        <p className="mb-4 text-center">Si elimina, ¡no hay vuelta atrás!</p>
+        <div className="flex justify-around mt-4">
+          <CancelButton onClick={onCancel}>Cancelar</CancelButton>
+          <ConfirmButton onClick={onDelete}>Eliminar</ConfirmButton>
         </div>
       </div>
     </div>

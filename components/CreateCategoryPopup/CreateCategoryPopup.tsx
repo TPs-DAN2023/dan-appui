@@ -4,10 +4,14 @@ import { addCategoryMock } from "@/mocks";
 import { useState } from "react";
 
 interface CreateCategoryProps {
+  show: boolean;
   onCancel: () => void;
 }
 
-export default function CreateCategory({ onCancel }: CreateCategoryProps) {
+export default function CreateCategory({
+  show,
+  onCancel,
+}: CreateCategoryProps) {
   const initialCategoryState = {
     nombre: "",
   };
@@ -32,6 +36,10 @@ export default function CreateCategory({ onCancel }: CreateCategoryProps) {
       handleCancel(event);
     });
   };
+
+  if (!show) {
+    return null;
+  }
 
   return (
     <div className="fixed flex items-center justify-center z-10">
