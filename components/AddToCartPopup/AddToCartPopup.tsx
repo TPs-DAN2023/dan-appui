@@ -1,12 +1,12 @@
 import { CancelButton, ConfirmButton, FormInput } from "@/components";
 import { IProduct } from "@/interfaces";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface AddToCartPopupProps {
   product?: IProduct;
   show: boolean;
   onCancel: () => void;
-  onAddToCart: () => void;
+  onAddToCart: (stock: number, product?: IProduct) => void;
 }
 
 export default function AddToCartPopup({
@@ -15,8 +15,22 @@ export default function AddToCartPopup({
   onCancel,
   onAddToCart,
 }: AddToCartPopupProps) {
-  const [stock, setStock] = useState(1);
+  const [stock, setStock] = useState<number>();
+  const [maxStockAvailable, setMaxStockAvailable] = useState<number>();
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+
+  useEffect(() => {
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const existingProductIndex = cart.findIndex(
+      (item: { id: number }) => item.id === product?.id
+    );
+    setStock(1);
+    setMaxStockAvailable(
+      existingProductIndex !== -1
+        ? product?.stockActual! - cart[existingProductIndex].selectedStock
+        : product?.stockActual
+    );
+  }, [product?.id, product?.stockActual]);
 
   const handleCancel = (event: any) => {
     event.preventDefault();
@@ -29,6 +43,7 @@ export default function AddToCartPopup({
     setIsAddingToCart(true);
     // Here you can call your API to create the category
     console.log("Añadido al carrito!");
+    onAddToCart(stock!, product);
     handleCancel(event);
   };
 
@@ -40,7 +55,7 @@ export default function AddToCartPopup({
 
   const addingToCardText =
     `Añadiendo ${stock}` +
-    (stock > 1 ? " unidades" : " unidad") +
+    (stock! > 1 ? " unidades" : " unidad") +
     " al carrito...";
 
   if (!show) {
@@ -60,9 +75,12 @@ export default function AddToCartPopup({
             placeholder="Cantidad a añadir al carrito"
             value={stock}
             min={1}
-            max={product?.stockActual}
+            max={maxStockAvailable}
             required
-            onChange={(e) => setStock(parseInt(e.target.value))}
+            onChange={(e) => {
+              const value = parseInt(e.target.value);
+              setStock(value > maxStockAvailable! ? maxStockAvailable : value);
+            }}
           />
           <div className="flex justify-around mt-4">
             <CancelButton onClick={handleCancel}>Cancelar</CancelButton>

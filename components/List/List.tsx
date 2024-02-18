@@ -3,6 +3,7 @@ import { IIdentifiable, IList } from "@/interfaces";
 export default function List<T extends IIdentifiable>({
   items,
   onDelete,
+  onRemoveFromCart,
   onAddToCart,
   onView,
   onEdit,
@@ -16,7 +17,14 @@ export default function List<T extends IIdentifiable>({
             key={item.id}
             className="m-4 rounded-lg bg-blue-300 opacity-85"
           >
-            {renderItem(item, onDelete, onAddToCart, onView, onEdit)}
+            {renderItem(
+              item,
+              onDelete,
+              onRemoveFromCart,
+              onAddToCart,
+              onView,
+              onEdit
+            )}
           </article>
         ))}
       <span className="text-lg text-center mb-5">

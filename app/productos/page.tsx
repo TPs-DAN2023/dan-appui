@@ -7,20 +7,22 @@ import {
   Item,
   Loading,
   ConfirmDeletePopup,
+  CreateOrUpdateProduct,
+  AddToCartPopup,
+  RemoveFromCartPopup,
 } from "@/components";
 import { useEffect, useState } from "react";
-import { getProductsMock } from "../../mocks";
-import CreateOrUpdateProduct from "@/components/CreateOrUpdateProduct/CreateOrUpdateProduct";
+import { getProductsMock } from "@/mocks";
 import { extractProductAttributes } from "@/utils";
 import { IProduct } from "@/interfaces";
 import { faBasketShopping } from "@fortawesome/free-solid-svg-icons";
-import AddToCartPopup from "@/components/AddToCartPopup/AddToCartPopup";
 
 export default function Productos() {
   const [productsResult, setProductsResult] = useState<IProduct[]>([]);
   const [selectedItem, setSelectedItem] = useState<IProduct>();
   const [isCreatingProduct, setIsCreatingProduct] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isRemovingFromCart, setIsRemovingFromCart] = useState(false);
   const [isUpdatingProduct, setIsUpdatingProduct] = useState(false);
   const [isDeletingProduct, setIsDeletingProduct] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,7 +48,43 @@ export default function Productos() {
     getAllProducts();
   }, []);
 
-  const isPopupOpen = isDeletingProduct || isAddingToCart;
+  const handleAddToCart = (newStock: number, product?: IProduct) => {
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+    // Check if the product is already in the cart
+    const existingProductIndex = cart.findIndex(
+      (item: { id: number }) => item.id === product?.id
+    );
+
+    // Update the quantity if the new quantity is not 0
+    if (existingProductIndex !== -1 && newStock !== 0) {
+      cart[existingProductIndex].selectedStock =
+        cart[existingProductIndex].selectedStock + newStock;
+    } else {
+      // Add the product to the cart
+      const idProductAndStock = {
+        id: product?.id,
+        selectedStock: newStock,
+      };
+      cart.push(idProductAndStock);
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+    setIsAddingToCart(false);
+  };
+
+  const handleRemoveFromCart = (product?: IProduct) => {
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const existingProductIndex = cart.findIndex(
+      (item: { id: number }) => item.id === product?.id
+    );
+    if (existingProductIndex !== -1) {
+      cart.splice(existingProductIndex, 1);
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+  };
+
+  const isPopupOpen = isDeletingProduct || isAddingToCart || isRemovingFromCart;
 
   if (isLoading) return <Loading />;
 
@@ -56,6 +94,10 @@ export default function Productos() {
         <div className="overflow-x-hidden overflow-y-scroll border-r min-w-[400px]">
           <List<IProduct>
             items={productsResult}
+            onRemoveFromCart={(item) => {
+              setSelectedItem(item as IProduct);
+              setIsRemovingFromCart(true);
+            }}
             onAddToCart={(item) => {
               setSelectedItem(item as IProduct);
               setIsAddingToCart(true);
@@ -68,10 +110,25 @@ export default function Productos() {
               setSelectedItem(item as IProduct);
               setIsDeletingProduct(true);
             }}
-            renderItem={(item, onDelete, onAddToCart, onEdit) => {
+            renderItem={(
+              item,
+              onDelete,
+              onRemoveFromCart,
+              onAddToCart,
+              onEdit
+            ) => {
               const productAttributes = extractProductAttributes(
                 item as IProduct
               );
+
+              // Check if the product is in the cart and if it is at max stock
+              const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+              const cartItem = cart.find(
+                (cartItem: { id: number }) => cartItem.id === item.id
+              );
+              const isInCart = Boolean(cartItem);
+              const isAtMaxStock =
+                cartItem && cartItem.selectedStock === item.stockActual;
               return (
                 <Item
                   item={item}
@@ -80,7 +137,13 @@ export default function Productos() {
                   footer={productAttributes.footer}
                   status={productAttributes.status}
                   onDelete={() => onDelete(item)}
+                  onRemoveFromCart={
+                    isInCart
+                      ? () => onRemoveFromCart && onRemoveFromCart(item)
+                      : undefined
+                  }
                   onAddToCart={() => onAddToCart && onAddToCart(item)}
+                  disabledAddToCartButton={isAtMaxStock}
                   onEdit={() => onEdit && onEdit(item)}
                 />
               );
@@ -129,7 +192,13 @@ export default function Productos() {
             show={isAddingToCart}
             product={selectedItem}
             onCancel={() => setIsAddingToCart(false)}
-            onAddToCart={() => {}}
+            onAddToCart={handleAddToCart}
+          />
+          <RemoveFromCartPopup
+            show={isRemovingFromCart}
+            product={selectedItem}
+            onCancel={() => setIsRemovingFromCart(false)}
+            onRemoveFromCart={handleRemoveFromCart}
           />
         </div>
       )}

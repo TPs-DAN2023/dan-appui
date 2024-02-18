@@ -6,6 +6,7 @@ import {
   EditButton,
   DeleteButton,
   AddToCartButton,
+  RemoveFromCartButton,
 } from "../index";
 
 export default function Item<T>({
@@ -15,7 +16,9 @@ export default function Item<T>({
   footer,
   status,
   onDelete,
+  onRemoveFromCart,
   onAddToCart,
+  disabledAddToCartButton,
   onEdit,
   onView,
 }: IItem<T>) {
@@ -26,7 +29,15 @@ export default function Item<T>({
           {title}
         </p>
         <div className="flex gap-x-3">
-          {onAddToCart && <AddToCartButton onClick={() => onAddToCart(item)} />}
+          {onRemoveFromCart && (
+            <RemoveFromCartButton onClick={() => onRemoveFromCart(item)} />
+          )}
+          {onAddToCart && (
+            <AddToCartButton
+              onClick={() => onAddToCart(item)}
+              disabled={disabledAddToCartButton}
+            />
+          )}
           {onView && <ViewButton onClick={() => onView(item)} />}
           {onEdit && <EditButton onClick={() => onEdit(item)} />}
           <DeleteButton onClick={() => onDelete(item)} />

@@ -19,6 +19,7 @@ export default function FormInput({
   className,
   disabled,
   min,
+  max,
 }: FormInputProps) {
   return (
     <input
@@ -30,6 +31,7 @@ export default function FormInput({
       className={`border-2 border-gray-300 p-2 m-2 ${className}`}
       disabled={disabled}
       min={min}
+      max={max}
     />
   );
 }

@@ -26,3 +26,6 @@ export { default as FormInput } from "./FormInput/FormInput";
 export { default as ConfirmDeletePopup } from "./ConfirmDeletePopup/ConfirmDeletePopup";
 export { default as ConfirmCancelPopup } from "./ConfirmCancelPopup/ConfirmCancelPopup";
 export { default as AddToCartButton } from "./AddToCartButton/AddToCartButton";
+export { default as AddToCartPopup } from "./AddToCartPopup/AddToCartPopup";
+export { default as RemoveFromCartButton } from "./RemoveFromCartButton/RemoveFromCartButton";
+export { default as RemoveFromCartPopup } from "./RemoveFromCartPopup/RemoveFromCartPopup";
