@@ -62,11 +62,11 @@ export default function Productos() {
         cart[existingProductIndex].selectedStock + newStock;
     } else {
       // Add the product to the cart
-      const idProductAndStock = {
-        id: product?.id,
+      const productAndStock = {
+        product,
         selectedStock: newStock,
       };
-      cart.push(idProductAndStock);
+      cart.push(productAndStock);
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -137,13 +137,13 @@ export default function Productos() {
                   footer={productAttributes.footer}
                   status={productAttributes.status}
                   onDelete={() => onDelete(item)}
+                  disabledAddToCartButton={isAtMaxStock}
                   onRemoveFromCart={
                     isInCart
                       ? () => onRemoveFromCart && onRemoveFromCart(item)
                       : undefined
                   }
                   onAddToCart={() => onAddToCart && onAddToCart(item)}
-                  disabledAddToCartButton={isAtMaxStock}
                   onEdit={() => onEdit && onEdit(item)}
                 />
               );

@@ -54,12 +54,22 @@ export default function Pedidos() {
         <div className="overflow-x-hidden overflow-y-scroll border-r min-w-[400px]">
           <List<IOrder>
             items={ordersResult}
-            onView={(item) => setSelectedItem(item as IOrder)}
+            onView={(item) => {
+              console.log("Viewing item", item);
+              setSelectedItem(item as IOrder);
+            }}
             onDelete={(item) => {
               setSelectedItem(item as IOrder);
               setIsDeletingOrder(true);
             }}
-            renderItem={(item, onDelete, onView) => {
+            renderItem={(
+              item,
+              onDelete,
+              onRemoveFromCart,
+              onAddToCart,
+              onEdit,
+              onView
+            ) => {
               const orderAttributes = extractOrderAttributes(item as IOrder);
               return (
                 <Item
@@ -68,8 +78,8 @@ export default function Pedidos() {
                   body={orderAttributes.body}
                   footer={orderAttributes.footer}
                   status={orderAttributes.status}
-                  onView={() => onView && onView(item)}
                   onDelete={() => onDelete(item)}
+                  onView={() => onView && onView(item)}
                 />
               );
             }}

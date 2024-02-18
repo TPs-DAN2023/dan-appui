@@ -18,9 +18,9 @@ export default function Item<T>({
   footer,
   status,
   onDelete,
+  disabledAddToCartButton,
   onRemoveFromCart,
   onAddToCart,
-  disabledAddToCartButton,
   onEdit,
   onView,
 }: IItem<T>) {
