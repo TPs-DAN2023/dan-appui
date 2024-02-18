@@ -1,7 +1,12 @@
 "use client";
 
 import { IItem } from "@/interfaces";
-import { ViewButton, EditButton, DeleteButton } from "../index";
+import {
+  ViewButton,
+  EditButton,
+  DeleteButton,
+  AddToCartButton,
+} from "../index";
 
 export default function Item<T>({
   item,
@@ -9,9 +14,10 @@ export default function Item<T>({
   body,
   footer,
   status,
-  onView,
-  onEdit,
   onDelete,
+  onAddToCart,
+  onEdit,
+  onView,
 }: IItem<T>) {
   return (
     <div className="rounded-lg p-4">
@@ -20,8 +26,9 @@ export default function Item<T>({
           {title}
         </p>
         <div className="flex gap-x-3">
+          {onAddToCart && <AddToCartButton onClick={() => onAddToCart(item)} />}
           {onView && <ViewButton onClick={() => onView(item)} />}
-          <EditButton onClick={() => onEdit(item)} />
+          {onEdit && <EditButton onClick={() => onEdit(item)} />}
           <DeleteButton onClick={() => onDelete(item)} />
         </div>
       </header>
@@ -40,9 +47,9 @@ export default function Item<T>({
         {status && (
           <span
             className={`px-2 py-1 rounded text-sm ${
-              status === "RECIBIDO"
+              status === "RECIBIDO" || status === "ENVIADO"
                 ? "bg-green-500"
-                : status === "CANCELADO"
+                : status === "CANCELADO" || status === "RECHAZADO"
                 ? "bg-red-500"
                 : "bg-gray-500"
             }`}
