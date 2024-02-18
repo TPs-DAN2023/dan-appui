@@ -63,7 +63,7 @@ export default function Usuarios() {
             setSelectedItem(item as IUser);
             setIsDeletingUser(true);
           }}
-          renderItem={(item, onEdit, onDelete) => {
+          renderItem={(item, onDelete, onEdit) => {
             const userAttributes = extractUserAttributes(item as IUser);
             return (
               <Item
@@ -72,7 +72,7 @@ export default function Usuarios() {
                 body={userAttributes.body}
                 footer={userAttributes.footer}
                 status={userAttributes.status}
-                onEdit={() => onEdit(item)}
+                onEdit={() => onEdit && onEdit(item)}
                 onDelete={() => onDelete(item)}
               />
             );
