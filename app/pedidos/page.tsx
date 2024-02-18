@@ -20,7 +20,6 @@ export default function Pedidos() {
   const [ordersResult, setOrdersResult] = useState<IOrder[]>([]);
   const [selectedItem, setSelectedItem] = useState<IOrder>();
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
-  const [isUpdatingOrder, setIsUpdatingOrder] = useState(false);
   const [isDeletingOrder, setIsDeletingOrder] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -56,15 +55,11 @@ export default function Pedidos() {
           <List<IOrder>
             items={ordersResult}
             onView={(item) => setSelectedItem(item as IOrder)}
-            onEdit={(item) => {
-              setSelectedItem(item as IOrder);
-              setIsUpdatingOrder(true);
-            }}
             onDelete={(item) => {
               setSelectedItem(item as IOrder);
               setIsDeletingOrder(true);
             }}
-            renderItem={(item, onEdit, onDelete, onView) => {
+            renderItem={(item, onDelete, onView) => {
               const orderAttributes = extractOrderAttributes(item as IOrder);
               return (
                 <Item
@@ -74,7 +69,6 @@ export default function Pedidos() {
                   footer={orderAttributes.footer}
                   status={orderAttributes.status}
                   onView={() => onView && onView(item)}
-                  onEdit={() => onEdit(item)}
                   onDelete={() => onDelete(item)}
                 />
               );
@@ -83,7 +77,7 @@ export default function Pedidos() {
         </div>
         <div className="flex flex-col flex-grow overflow-x-hidden overflow-y-scroll">
           <Home
-            show={!isUpdatingOrder && !isCreatingOrder}
+            show={!isCreatingOrder && !selectedItem}
             icon={ordersResult.length > 0 ? faTruckField : undefined}
             title="Pedidos"
             subtitle={
