@@ -3,9 +3,9 @@ export { default as ClearButton } from "./ClearButton/ClearButton";
 export { default as ConfirmButton } from "./ConfirmButton/ConfirmButton"
 export { default as CreateCategoryPopup } from "./CreateCategoryPopup/CreateCategoryPopup";
 export { default as CreateOrder } from "./CreateOrder/CreateOrder"
-export { default as CreateProduct } from "./CreateProduct/CreateProduct"
+export { default as CreateOrUpdateProduct } from "./CreateOrUpdateProduct/CreateOrUpdateProduct"
 export { default as CreateProviderPopup } from "./CreateProviderPopup/CreateProviderPopup";
-export { default as CreateUser } from "./CreateUser/CreateUser"
+export { default as CreateOrUpdateUser } from "./CreateOrUpdateUser/CreateOrUpdateUser"
 export { default as CreateUserTypePopup } from "./CreateUserTypePopup/CreateUserTypePopup";
 export { default as CustomButton } from "./CustomButton/CustomButton"
 export { default as DeleteButton } from "./DeleteButton/DeleteButton";
