@@ -13,7 +13,7 @@ export default async function getUsersMock(userId: number) {
       correoElectronico: "jperez@user.com",
       tipoUsuario: {
         id: 1,
-        tipo: "GERENTE",
+        tipo: "Vendedor",
       },
     },
     {
@@ -23,7 +23,7 @@ export default async function getUsersMock(userId: number) {
       correoElectronico: "jrodriguez@user.com",
       tipoUsuario: {
         id: 2,
-        tipo: "EMPLEADO",
+        tipo: "Administrador",
       },
     },
     {
@@ -33,7 +33,7 @@ export default async function getUsersMock(userId: number) {
       correoElectronico: "ppcapiedra@user.com",
       tipoUsuario: {
         id: 2,
-        tipo: "EMPLEADO",
+        tipo: "Vendedor",
       },
     },
   ];
