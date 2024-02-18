@@ -4,13 +4,17 @@ import { faShop, faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { ROUTES } from "../../constants";
 import Link from "next/link";
 import { CancelButton, ConfirmButton } from "@/components";
+import HomeButton from "../HomeButton/HomeButton";
 
 export default function NavBar() {
   return (
     <>
       <div className="flex w-full justify-between p-2 md:p-4 items-center">
         <div className="flex items-center">
-          <FontAwesomeIcon icon={faShop} className="w-6 h-6" />
+          <Link href="/testHome">
+            {/* TODO: Change /testHome */}
+            <HomeButton onClick={() => {}} />
+          </Link>
           <h1 className="pl-4">Marketplace B2B</h1>
         </div>
         <div className="flex items-center justify-center gap-x-5">
