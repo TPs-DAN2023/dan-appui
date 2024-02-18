@@ -25,3 +25,4 @@ export { default as Home } from "./Home/Home";
 export { default as FormInput } from "./FormInput/FormInput";
 export { default as ConfirmDeletePopup } from "./ConfirmDeletePopup/ConfirmDeletePopup";
 export { default as ConfirmCancelPopup } from "./ConfirmCancelPopup/ConfirmCancelPopup";
+export { default as AddToCartButton } from "./AddToCartButton/AddToCartButton";
