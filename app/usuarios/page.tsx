@@ -6,23 +6,26 @@ import {
   Layout,
   Home,
   Item,
-  CreateUser,
+  CreateOrUpdateUser,
   Loading,
+  ConfirmDeletePopup,
 } from "@/components";
 import { useEffect, useState } from "react";
 import { getUsersMock } from "../../mocks";
 import { extractUserAttributes } from "@/utils";
 import { IUser } from "@/interfaces";
 import { getUsers } from "@/services/usersAPI";
+import { faUsers } from "@fortawesome/free-solid-svg-icons";
 
 export default function Usuarios() {
   const [usersResult, setUsersResult] = useState<IUser[]>([]);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState<IUser>();
   const [isCreatingUser, setIsCreatingUser] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isUpdatingUser, setIsUpdatingUser] = useState(false);
+  const [isDeletingUser, setIsDeletingUser] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getAllUsers = async () => {
-    setIsLoading(true);
     // Fetch data from external API
     // const res = await fetch("http://localhost/api/usuarios");
     const res = await getUsersMock(1);
@@ -38,18 +41,30 @@ export default function Usuarios() {
     setIsLoading(false);
   };
 
+  // TODO: Find if there is a way to avoid calling this useEffect twice
   useEffect(() => {
     getAllUsers();
   }, []);
 
+  const isPopupOpen = isDeletingUser;
+
   if (isLoading) return <Loading />;
 
   return (
-    <Layout>
+    <Layout className={`${isPopupOpen ? "opacity-50" : ""}`}>
       <div className="overflow-x-hidden overflow-y-scroll border-r min-w-[400px]">
-        <List items={usersResult} onClick={setSelectedItem}>
-          {(item: IUser, onClick: any): any => {
-            const userAttributes = extractUserAttributes(item);
+        <List<IUser>
+          items={usersResult}
+          onEdit={(item) => {
+            setSelectedItem(item as IUser);
+            setIsUpdatingUser(true);
+          }}
+          onDelete={(item) => {
+            setSelectedItem(item as IUser);
+            setIsDeletingUser(true);
+          }}
+          renderItem={(item, onEdit, onDelete) => {
+            const userAttributes = extractUserAttributes(item as IUser);
             return (
               <Item
                 item={item}
@@ -57,33 +72,49 @@ export default function Usuarios() {
                 body={userAttributes.body}
                 footer={userAttributes.footer}
                 status={userAttributes.status}
-                onView={onClick}
-                onEdit={() => console.log("Not yet implemented!")}
-                onDelete={() => console.log("Not yet implemented!")}
+                onEdit={() => onEdit(item)}
+                onDelete={() => onDelete(item)}
               />
             );
           }}
-        </List>
+        />
       </div>
 
       <div className="flex flex-col flex-grow overflow-x-hidden overflow-y-scroll">
         <Home
-          show={!selectedItem && !isCreatingUser}
+          show={!isCreatingUser && !isUpdatingUser}
+          icon={usersResult.length > 0 ? faUsers : undefined}
           title="Usuarios"
-          subtitle="No hay ningún usuario seleccionado"
-          description="Seleccione un usuario de la lista para visualizar el detalle del mismo."
+          subtitle={
+            usersResult.length > 0 ? "Lista de usuarios" : "No existen usuarios"
+          }
+          description={
+            usersResult.length > 0
+              ? "Puede editar o eliminar cualquier usuario de la lista."
+              : "Cree un usuario para comenzar."
+          }
           buttonText="Crear usuario"
           onClick={() => setIsCreatingUser(true)}
         />
-        <UserDetails
-          show={!!selectedItem}
+        <CreateOrUpdateUser
+          show={isUpdatingUser || isCreatingUser}
+          onCancel={() => {
+            setIsUpdatingUser(false);
+            setIsCreatingUser(false);
+            setSelectedItem(undefined);
+          }}
           user={selectedItem}
-          onClearSelectionPressed={() => setSelectedItem(null)}
         />
-        <CreateUser
-          show={!selectedItem && isCreatingUser}
-          onCancel={() => setIsCreatingUser(false)}
-        />
+        {isPopupOpen && (
+          <div className="absolute inset-0 flex items-center justify-center z-10">
+            <ConfirmDeletePopup
+              show={isDeletingUser}
+              onDelete={() => {}}
+              onCancel={() => setIsDeletingUser(false)}
+              messageTitle={`¿Está seguro que desea eliminar el usuario seleccionado (id=${selectedItem?.id})?`}
+            />
+          </div>
+        )}
       </div>
     </Layout>
   );
