@@ -1,5 +1,7 @@
 import { IOrder } from "@/interfaces";
-import { ClearButton } from "..";
+import { IconButton } from "@/components";
+import { faTimesCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface OrderDetailsProps {
   order?: IOrder;
@@ -20,7 +22,9 @@ export default function OrderDetails({
     <div className="flex flex-1 flex-col">
       {
         <div className="flex mx-4 sm:mx-4 md:mx-20 mt-6 flex-row-reverse text-2xl">
-          <ClearButton onClick={() => onClearSelectionPressed()} />
+          <IconButton onClick={() => onClearSelectionPressed()}>
+            <FontAwesomeIcon icon={faTimesCircle} />
+          </IconButton>
         </div>
       }
 

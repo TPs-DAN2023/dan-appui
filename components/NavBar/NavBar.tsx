@@ -1,10 +1,14 @@
 // import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import { faShop, faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { ROUTES } from "../../constants";
 import Link from "next/link";
-import { CancelButton, CartButton, ConfirmButton } from "@/components";
-import HomeButton from "../HomeButton/HomeButton";
+import {
+  CancelButton,
+  CartButton,
+  ConfirmButton,
+  IconButton,
+} from "@/components";
 
 export default function NavBar() {
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -13,9 +17,11 @@ export default function NavBar() {
     <>
       <div className="flex w-full justify-between p-2 md:p-4 items-center">
         <div className="flex items-center">
+          {/* TODO: Change /testHome */}
           <Link href="/testHome">
-            {/* TODO: Change /testHome */}
-            <HomeButton onClick={() => {}} />
+            <IconButton onClick={() => {}}>
+              <FontAwesomeIcon icon={faShop} className="w-6 h-6" />
+            </IconButton>
           </Link>
           <h1 className="pl-4">Marketplace B2B</h1>
         </div>
@@ -35,7 +41,7 @@ export default function NavBar() {
               Usuarios
             </ConfirmButton>
           </Link>
-          <Link href="/cart">
+          <Link href="/carrito">
             <CartButton onClick={() => {}} className="ml-2">
               Ver carrito ({cart.length})
             </CartButton>

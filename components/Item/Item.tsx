@@ -1,13 +1,15 @@
 "use client";
 
 import { IItem } from "@/interfaces";
+import { IconButton } from "../index";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  ViewButton,
-  EditButton,
-  DeleteButton,
-  AddToCartButton,
-  RemoveFromCartButton,
-} from "../index";
+  faCartArrowDown,
+  faCartPlus,
+  faEdit,
+  faEye,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function Item<T>({
   item,
@@ -30,17 +32,34 @@ export default function Item<T>({
         </p>
         <div className="flex gap-x-3">
           {onRemoveFromCart && (
-            <RemoveFromCartButton onClick={() => onRemoveFromCart(item)} />
+            <IconButton onClick={() => onRemoveFromCart(item)}>
+              <FontAwesomeIcon icon={faCartArrowDown} color="red" />
+            </IconButton>
           )}
           {onAddToCart && (
-            <AddToCartButton
+            <IconButton
               onClick={() => onAddToCart(item)}
               disabled={disabledAddToCartButton}
-            />
+            >
+              <FontAwesomeIcon
+                icon={faCartPlus}
+                color={disabledAddToCartButton ? "gray" : "green"}
+              />
+            </IconButton>
           )}
-          {onView && <ViewButton onClick={() => onView(item)} />}
-          {onEdit && <EditButton onClick={() => onEdit(item)} />}
-          <DeleteButton onClick={() => onDelete(item)} />
+          {onView && (
+            <IconButton onClick={() => onView(item)}>
+              <FontAwesomeIcon icon={faEye} />
+            </IconButton>
+          )}
+          {onEdit && (
+            <IconButton onClick={() => onEdit(item)}>
+              <FontAwesomeIcon icon={faEdit} />
+            </IconButton>
+          )}
+          <IconButton onClick={() => onDelete(item)}>
+            <FontAwesomeIcon icon={faTrash} color="red" />
+          </IconButton>
         </div>
       </header>
       <hr className="mt-2 mb-1 border border-blue-400" />

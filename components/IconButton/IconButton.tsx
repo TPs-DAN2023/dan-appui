@@ -1,15 +1,16 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
+"use client";
 
-interface AddToCartButtonProps {
+interface IconButtonProps {
   onClick: VoidFunction;
+  children: React.ReactNode;
   disabled?: boolean;
 }
 
-export default function AddToCartButton({
+export default function IconButton({
   onClick,
+  children,
   disabled,
-}: AddToCartButtonProps) {
+}: IconButtonProps) {
   return (
     <button
       className={`rounded-3xl self-end ${
@@ -20,7 +21,7 @@ export default function AddToCartButton({
       onClick={() => onClick()}
       disabled={disabled}
     >
-      <FontAwesomeIcon icon={faCartPlus} color={disabled ? "gray" : "green"} />
+      {children}
     </button>
   );
 }
