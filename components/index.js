@@ -24,3 +24,4 @@ export { default as OrderDetails } from "./OrderDetails/OrderDetails";
 export { default as ProductDetails } from "./ProductDetails/ProductDetails"
 export { default as RemoveFromCartPopup } from "./RemoveFromCartPopup/RemoveFromCartPopup";
 export { default as UserDetails } from "./UserDetails/UserDetails"
+export { default as CartProducts } from "./CartProducts/CartProducts"
