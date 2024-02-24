@@ -1,4 +1,8 @@
+import { API_URLS } from '@/services';
 
-export function getUsers() {
-  return fetch("http://localhost/api/usuarios").then((res) => res.json());
+const getUsers = async () => {
+  const response = await fetch(API_URLS.users);
+  return response.json();
 }
+
+export { getUsers };
