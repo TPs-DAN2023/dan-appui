@@ -10,6 +10,7 @@ import {
   CreateOrUpdateProduct,
   AddToCartPopup,
   RemoveFromCartPopup,
+  Error,
 } from "@/components";
 import { useState } from "react";
 import { extractProductAttributes } from "@/utils";
@@ -71,7 +72,7 @@ function Productos() {
   const isPopupOpen = isDeletingProduct || isAddingToCart || isRemovingFromCart;
 
   if (isLoading) return <Loading />;
-  if (error) return <div>Error: {error.message}</div>;
+  if (error) return <Error message={error.message} />;
 
   return (
     <>

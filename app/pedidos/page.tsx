@@ -9,6 +9,7 @@ import {
   CreateOrder,
   Loading,
   ConfirmDeletePopup,
+  Error,
 } from "@/components";
 import { useState } from "react";
 import { extractOrderAttributes } from "@/utils";
@@ -30,7 +31,7 @@ function Pedidos() {
   const isPopupOpen = isDeletingOrder;
 
   if (isLoading) return <Loading />;
-  if (error) return <div>Error: {error.message}</div>;
+  if (error) return <Error message={error.message} />;
 
   return (
     <>

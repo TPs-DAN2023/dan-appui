@@ -1,6 +1,7 @@
 export { default as AddToCartPopup } from "./AddToCartPopup/AddToCartPopup";
 export { default as CancelButton } from "./CancelButton/CancelButton";
 export { default as CartButton } from "./CartButton/CartButton";
+export { default as CartProducts } from "./CartProducts/CartProducts"
 export { default as ConfirmButton } from "./ConfirmButton/ConfirmButton"
 export { default as ConfirmCancelPopup } from "./ConfirmCancelPopup/ConfirmCancelPopup";
 export { default as ConfirmDeletePopup } from "./ConfirmDeletePopup/ConfirmDeletePopup";
@@ -10,6 +11,7 @@ export { default as CreateOrUpdateProduct } from "./CreateOrUpdateProduct/Create
 export { default as CreateOrUpdateUser } from "./CreateOrUpdateUser/CreateOrUpdateUser"
 export { default as CreateProviderPopup } from "./CreateProviderPopup/CreateProviderPopup";
 export { default as CreateUserTypePopup } from "./CreateUserTypePopup/CreateUserTypePopup";
+export { default as Error } from "./Error/Error"
 export { default as FormInput } from "./FormInput/FormInput";
 export { default as Home } from "./Home/Home";
 export { default as IconButton } from "./IconButton/IconButton";
@@ -23,4 +25,3 @@ export { default as OrderDetails } from "./OrderDetails/OrderDetails";
 export { default as ProductDetails } from "./ProductDetails/ProductDetails"
 export { default as RemoveFromCartPopup } from "./RemoveFromCartPopup/RemoveFromCartPopup";
 export { default as UserDetails } from "./UserDetails/UserDetails"
-export { default as CartProducts } from "./CartProducts/CartProducts"

@@ -8,6 +8,7 @@ import {
   CreateOrUpdateUser,
   Loading,
   ConfirmDeletePopup,
+  Error,
 } from "@/components";
 import { useState } from "react";
 import { extractUserAttributes } from "@/utils";
@@ -30,7 +31,7 @@ function Usuarios() {
   const isPopupOpen = isDeletingUser;
 
   if (isLoading) return <Loading />;
-  if (error) return <div>Error: {error.message}</div>;
+  if (error) return <Error message={error.message} />;
 
   return (
     <Layout className={`${isPopupOpen ? "opacity-50" : ""}`}>
