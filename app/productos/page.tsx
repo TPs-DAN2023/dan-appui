@@ -1,5 +1,5 @@
 "use client";
-
+import { API_URLS } from "@/services";
 import {
   List,
   Layout,
@@ -11,42 +11,26 @@ import {
   AddToCartPopup,
   RemoveFromCartPopup,
 } from "@/components";
-import { useEffect, useState } from "react";
-import { getProductsMock } from "@/mocks";
+import { useState } from "react";
 import { extractProductAttributes } from "@/utils";
 import { IProduct } from "@/interfaces";
 import { faBasketShopping } from "@fortawesome/free-solid-svg-icons";
+import { withAuth } from "@/hocs";
+import { useFetch } from "@/hooks";
 
-export default function Productos() {
-  const [productsResult, setProductsResult] = useState<IProduct[]>([]);
+function Productos() {
+  const {
+    data: products,
+    error,
+    isLoading,
+  } = useFetch<IProduct[]>(API_URLS.products, "GET");
+
   const [selectedItem, setSelectedItem] = useState<IProduct>();
   const [isCreatingProduct, setIsCreatingProduct] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [isRemovingFromCart, setIsRemovingFromCart] = useState(false);
   const [isUpdatingProduct, setIsUpdatingProduct] = useState(false);
   const [isDeletingProduct, setIsDeletingProduct] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const getAllProducts = async () => {
-    // Fetch data from external API
-    // const res = await fetch("http://localhost/api/productos");
-    const res = await getProductsMock(1);
-    // const data = await res.json();
-    const data = res;
-    if (!data) {
-      return {
-        notFound: true,
-      };
-    }
-    console.log(data);
-    setProductsResult(data);
-    setIsLoading(false);
-  };
-
-  // TODO: Find if there is a way to avoid calling this useEffect twice
-  useEffect(() => {
-    getAllProducts();
-  }, []);
 
   const handleAddToCart = (newStock: number, product?: IProduct) => {
     const cart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -87,13 +71,14 @@ export default function Productos() {
   const isPopupOpen = isDeletingProduct || isAddingToCart || isRemovingFromCart;
 
   if (isLoading) return <Loading />;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <>
       <Layout className={`${isPopupOpen ? "opacity-50" : ""}`}>
         <div className="overflow-x-hidden overflow-y-scroll border-r min-w-[400px]">
           <List<IProduct>
-            items={productsResult}
+            items={products || []}
             onRemoveFromCart={(item) => {
               setSelectedItem(item as IProduct);
               setIsRemovingFromCart(true);
@@ -154,15 +139,17 @@ export default function Productos() {
         <div className="flex flex-col flex-grow overflow-x-hidden overflow-y-scroll">
           <Home
             show={!isUpdatingProduct && !isCreatingProduct}
-            icon={productsResult.length > 0 ? faBasketShopping : undefined}
+            icon={
+              products && products.length > 0 ? faBasketShopping : undefined
+            }
             title="Productos"
             subtitle={
-              productsResult.length > 0
+              products && products.length > 0
                 ? "Lista de productos"
                 : "No existen productos creados"
             }
             description={
-              productsResult.length > 0
+              products && products.length > 0
                 ? "Puede editar o eliminar cualquier producto de la lista."
                 : "Cree un producto para comenzar."
             }
@@ -205,3 +192,5 @@ export default function Productos() {
     </>
   );
 }
+
+export default withAuth(Productos);

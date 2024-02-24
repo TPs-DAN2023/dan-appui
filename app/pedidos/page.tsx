@@ -1,5 +1,5 @@
 "use client";
-
+import { API_URLS } from "@/services";
 import {
   List,
   OrderDetails,
@@ -10,50 +10,34 @@ import {
   Loading,
   ConfirmDeletePopup,
 } from "@/components";
-import { useEffect, useState } from "react";
-import { getOrdersMock } from "../../mocks";
+import { useState } from "react";
 import { extractOrderAttributes } from "@/utils";
 import { IOrder } from "@/interfaces";
 import { faTruckField } from "@fortawesome/free-solid-svg-icons";
+import { withAuth } from "@/hocs";
+import { useFetch } from "@/hooks";
 
-export default function Pedidos() {
-  const [ordersResult, setOrdersResult] = useState<IOrder[]>([]);
+function Pedidos() {
+  const {
+    data: orders,
+    error,
+    isLoading,
+  } = useFetch<IOrder[]>(API_URLS.orders, "GET");
   const [selectedItem, setSelectedItem] = useState<IOrder>();
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
   const [isDeletingOrder, setIsDeletingOrder] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const getAllPedidos = async () => {
-    // Fetch data from external API
-    // const res = await fetch("http://localhost/api/pedidos");
-    const res = await getOrdersMock(1);
-    // const data = await res.json();
-    const data = res;
-    if (!data) {
-      return {
-        notFound: true,
-      };
-    }
-    console.log(data);
-    setOrdersResult(data);
-    setIsLoading(false);
-  };
-
-  // TODO: Find if there is a way to avoid calling this useEffect twice
-  useEffect(() => {
-    getAllPedidos();
-  }, []);
 
   const isPopupOpen = isDeletingOrder;
 
   if (isLoading) return <Loading />;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <>
       <Layout className={`${isPopupOpen ? "opacity-50" : ""}`}>
         <div className="overflow-x-hidden overflow-y-scroll border-r min-w-[400px]">
           <List<IOrder>
-            items={ordersResult}
+            items={orders || []}
             onView={(item) => {
               console.log("Viewing item", item);
               setSelectedItem(item as IOrder);
@@ -88,15 +72,15 @@ export default function Pedidos() {
         <div className="flex flex-col flex-grow overflow-x-hidden overflow-y-scroll">
           <Home
             show={!isCreatingOrder && !selectedItem}
-            icon={ordersResult.length > 0 ? faTruckField : undefined}
+            icon={orders && orders.length > 0 ? faTruckField : undefined}
             title="Pedidos"
             subtitle={
-              ordersResult.length > 0
+              orders && orders.length > 0
                 ? "Lista de pedidos"
                 : "No existen pedidos creados"
             }
             description={
-              ordersResult.length > 0
+              orders && orders.length > 0
                 ? "Puede visualizar, editar o eliminar cualquier pedido de la lista."
                 : "Cree un producto para comenzar."
             }
@@ -130,3 +114,5 @@ export default function Pedidos() {
     </>
   );
 }
+
+export default withAuth(Pedidos);
