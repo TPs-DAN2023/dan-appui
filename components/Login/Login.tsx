@@ -2,14 +2,15 @@
 
 import { ConfirmButton } from "@/components";
 import { useState } from "react";
-import { login } from "../../mocks";
+import { authAPI } from "@/services";
 import { useRouter } from "next/navigation";
-import { ROUTES } from "../../constants";
+import { ROUTES } from "@/constants";
+import { useUser } from "@/hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock, faUser } from "@fortawesome/free-solid-svg-icons";
-// import Link from "next/link";
 
 export default function Login() {
+  const { setUserLoggedIn } = useUser();
   const [error, setError] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [password, setPassword] = useState("");
@@ -19,20 +20,27 @@ export default function Login() {
   const router = useRouter();
 
   const handleLogin = async (event: any) => {
-    // TODO: replace 'any' with the correct type
-
     // Use preventDefault to stop the page from refreshing when the form is submitted
     event.preventDefault();
-
     setIsLoggingIn(true);
-    const result = await login(user, password);
-    setIsLoggingIn(false);
+    try {
+      const result = await authAPI.login(user, password);
 
-    if (result.error) {
-      setError(result.error);
-      return;
+      // Store the session in localStorage
+      localStorage.setItem("session", JSON.stringify(result));
+
+      setUserLoggedIn(true);
+      router.push(ROUTES.HOME);
+    } catch (error) {
+      if (error instanceof Error) {
+        setError("Error al loguearse:" + error.message);
+      }
+      setError(
+        "Un error desconocido ha ocurrido al intentar loguearse. Por favor, intente nuevamente."
+      );
+    } finally {
+      setIsLoggingIn(false);
     }
-    router.push("/testHome");
   };
 
   return (
@@ -74,7 +82,7 @@ export default function Login() {
                 {showPassword ? "Ocultar" : "Mostrar"}
               </button>
             </div>
-            <div className="flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center">
               <ConfirmButton
                 type="submit"
                 className="pl-10 pr-10"
