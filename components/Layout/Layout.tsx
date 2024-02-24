@@ -1,4 +1,4 @@
-import NavBar from "../NavBar/NavBar";
+import { NavBar } from "@/components";
 
 interface LayoutProps {
   children: any;
