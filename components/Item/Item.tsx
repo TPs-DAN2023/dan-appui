@@ -1,7 +1,7 @@
 "use client";
 
 import { IItem } from "@/interfaces";
-import { IconButton } from "../index";
+import { IconButton } from "@/components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCartArrowDown,
@@ -10,6 +10,8 @@ import {
   faEye,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
+import { hasUserType } from "@/utils";
+import { USER_TYPES } from "@/constants";
 
 export default function Item<T>({
   item,
@@ -52,14 +54,16 @@ export default function Item<T>({
               <FontAwesomeIcon icon={faEye} />
             </IconButton>
           )}
-          {onEdit && (
+          {onEdit && hasUserType(USER_TYPES.ADMIN) && (
             <IconButton onClick={() => onEdit(item)}>
               <FontAwesomeIcon icon={faEdit} />
             </IconButton>
           )}
-          <IconButton onClick={() => onDelete(item)}>
-            <FontAwesomeIcon icon={faTrash} color="red" />
-          </IconButton>
+          {hasUserType(USER_TYPES.ADMIN) && (
+            <IconButton onClick={() => onDelete(item)}>
+              <FontAwesomeIcon icon={faTrash} color="red" />
+            </IconButton>
+          )}
         </div>
       </header>
       <hr className="mt-2 mb-1 border border-blue-400" />
