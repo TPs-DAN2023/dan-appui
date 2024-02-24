@@ -1,7 +1,8 @@
+import { API_URLS } from "@/services";
 import { useState } from "react";
 import { CancelButton, ConfirmButton, FormInput } from "@/components";
-import { addProviderMock } from "@/mocks";
 import { IProvider } from "@/interfaces";
+import { getUserToken } from "@/utils";
 
 interface CreateProviderProps {
   show: boolean;
@@ -26,16 +27,32 @@ export default function CreateProvider({
     onCancel();
   };
 
-  const handleSubmit = (event: any) => {
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
     setIsCreatingProvider(true);
-    // Here you can call your API to create the provider
-    console.log("Proveedor creado!");
-    addProviderMock(provider).then((res) => {
-      console.log(res);
+
+    try {
+      const response = await fetch(API_URLS.providers, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getUserToken()}`,
+        },
+        body: JSON.stringify(provider),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error creating provider");
+      }
+
+      const newProvider = await response.json();
+      console.log("Proveedor creado!", newProvider);
       setIsCreatingProvider(false);
       handleCancel(event);
-    });
+    } catch (error) {
+      console.error(error);
+      setIsCreatingProvider(false);
+    }
   };
 
   if (!show) {

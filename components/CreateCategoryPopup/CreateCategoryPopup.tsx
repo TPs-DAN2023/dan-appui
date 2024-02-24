@@ -1,7 +1,8 @@
+import { API_URLS } from "@/services";
 import { CancelButton, ConfirmButton, FormInput } from "@/components";
 import { ICategory } from "@/interfaces";
-import { addCategoryMock } from "@/mocks";
 import { useState } from "react";
+import { getUserToken } from "@/utils";
 
 interface CreateCategoryProps {
   show: boolean;
@@ -25,16 +26,32 @@ export default function CreateCategory({
     onCancel();
   };
 
-  const handleSubmit = (event: any) => {
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
     setIsCreatingCategory(true);
-    // Here you can call your API to create the category
-    console.log("Categoría creada!");
-    addCategoryMock(category).then((res) => {
-      console.log(res);
+
+    try {
+      const response = await fetch(API_URLS.categories, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getUserToken()}`,
+        },
+        body: JSON.stringify(category),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error creating category");
+      }
+
+      const newCategory = await response.json();
+      console.log("Categoría creada!", newCategory);
       setIsCreatingCategory(false);
       handleCancel(event);
-    });
+    } catch (error) {
+      console.error(error);
+      setIsCreatingCategory(false);
+    }
   };
 
   if (!show) {

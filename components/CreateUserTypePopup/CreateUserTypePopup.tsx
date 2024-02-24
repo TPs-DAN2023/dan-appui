@@ -1,7 +1,8 @@
+import { API_URLS } from "@/services";
 import { CancelButton, ConfirmButton, FormInput } from "@/components";
 import { IUserType } from "@/interfaces";
-import { addUserTypeMock } from "@/mocks";
 import { useState } from "react";
+import { getUserToken } from "@/utils";
 
 interface CreateUserTypeProps {
   show: boolean;
@@ -24,16 +25,32 @@ export default function CreateUserType({
     onCancel();
   };
 
-  const handleSubmit = (event: any) => {
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
     setIsCreatingUserType(true);
-    // Here you can call your API to create the userType
-    console.log("Tipo de usuario creado!");
-    addUserTypeMock(userType).then((res) => {
-      console.log(res);
+
+    try {
+      const response = await fetch(API_URLS.userTypes, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getUserToken()}`,
+        },
+        body: JSON.stringify(userType),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error creating user type");
+      }
+
+      const newUserType = await response.json();
+      console.log("Tipo de usuario creado!", newUserType);
       setIsCreatingUserType(false);
       handleCancel(event);
-    });
+    } catch (error) {
+      console.error(error);
+      setIsCreatingUserType(false);
+    }
   };
 
   if (!show) {
