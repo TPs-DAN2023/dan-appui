@@ -17,7 +17,6 @@ export { default as Item } from "./Item/Item"
 export { default as Layout } from "./Layout/Layout";
 export { default as List } from "./List/List";
 export { default as Loading } from "./Loading/Loading";
-export { default as Login } from "./Login/Login";
 export { default as NavBar } from "./NavBar/NavBar";
 export { default as OpenDialogButton } from "./OpenDialogButton/OpenDialogButton";
 export { default as OrderDetails } from "./OrderDetails/OrderDetails";
