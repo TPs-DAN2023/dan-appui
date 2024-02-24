@@ -6,10 +6,10 @@ import {
   CancelButton,
   OpenDialogButton,
   FormInput,
+  ConfirmCancelPopup,
 } from "@/components";
 import { getProvidersMock, getCategoriesMock, addProductMock } from "@/mocks";
 import { ICategory, IProduct, IProvider } from "@/interfaces";
-import ConfirmCancelPopup from "../ConfirmCancelPopup/ConfirmCancelPopup";
 
 interface CreateOrUpdateProductProps {
   show: boolean;

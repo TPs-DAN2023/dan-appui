@@ -1,3 +1,4 @@
+import { API_URLS } from "@/services";
 import {
   CancelButton,
   ConfirmButton,
@@ -7,8 +8,8 @@ import {
   OpenDialogButton,
 } from "@/components";
 import { IUser, IUserType } from "@/interfaces";
-import { addUserMock, getUserTypesMock } from "@/mocks";
 import React, { useEffect, useState } from "react";
+import { useFetch } from "@/hooks";
 
 interface CreateOrUpdateUserProps {
   show: boolean;
@@ -29,37 +30,35 @@ export default function CreateOrUpdateUser({
   user: userToUpdate,
 }: CreateOrUpdateUserProps) {
   const [user, setUser] = useState<IUser>(emptyUser);
+  const {
+    data: fetchedUser,
+    error: errorUser,
+    isLoading: isLoadingUser,
+  } = useFetch<IUser>(
+    userToUpdate ? API_URLS.users + "/" + userToUpdate.id : "",
+    "GET"
+  );
+
+  const {
+    data: fetchedUserTypes,
+    error: errorUserTypes,
+    isLoading: isLoadingUserTypes,
+  } = useFetch<IUserType[]>(API_URLS.userTypes, "GET");
 
   useEffect(() => {
     if (userToUpdate) {
-      fetchUserTypes();
-      setUser(userToUpdate);
+      setUser(fetchedUser || emptyUser);
+      setUserTypes(fetchedUserTypes || []);
     } else {
       setUser(emptyUser);
       setUserTypes([]);
     }
-  }, [userToUpdate, show]);
+  }, [userToUpdate, fetchedUser, fetchedUserTypes]);
 
   const [isCreatingUserType, setIsCreatingUserType] = useState(false);
   const [userTypes, setUserTypes] = useState<IUserType[]>([]);
   const [isCanceling, setIsCanceling] = useState(false);
   const [isCreatingUser, setIsCreatingUser] = useState(false);
-
-  const fetchUserTypes = async () => {
-    // Here you can call your API to fetch the user types
-    // const res = await fetch("http://localhost/api/tipo-usuarios");
-    console.log("Fetching user types...");
-    const res = await getUserTypesMock();
-    // const data = await res.json();
-    const data = res;
-    if (!data) {
-      return {
-        notFound: true,
-      };
-    }
-    console.log(data);
-    setUserTypes(data);
-  };
 
   const handleCancel = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -70,15 +69,44 @@ export default function CreateOrUpdateUser({
     onCancel();
   };
 
-  const handleSubmit = (event: any) => {
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
     setIsCreatingUser(true);
-    console.log(`Usuario creado!`);
-    addUserMock(user).then((res) => {
-      console.log(res);
+
+    try {
+      const response = await fetch(API_URLS.users, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error creating user");
+      }
+
+      const newUser = await response.json();
+      console.log("Usuario creado!", newUser);
       setIsCreatingUser(false);
       handleCancel(event);
-    });
+    } catch (error) {
+      console.error(error);
+      setIsCreatingUser(false);
+    }
+    // const {
+    //   data: user,
+    //   error: error,
+    //   isLoading: isLoading,
+    // } = useFetch<IUser>(API_URLS.users, "POST", user);
+    // console.log(`Usuario creado!`);
+    // setIsCreatingUser(false);
+    // handleCancel(event);
+    // addUserMock(user).then((res) => {
+    //   console.log(res);
+    //   setIsCreatingUser(false);
+    //   handleCancel(event);
+    // });
   };
 
   const allInputsAreValid = () => {
@@ -133,7 +161,7 @@ export default function CreateOrUpdateUser({
             <select
               className="border-2 border-gray-300 p-2 m-2"
               value={user.tipoUsuario?.id}
-              onFocus={fetchUserTypes}
+              onFocus={() => console.log(user.tipoUsuario?.id)}
               required
               onChange={(e) =>
                 setUser({
