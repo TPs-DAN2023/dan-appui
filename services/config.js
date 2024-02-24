@@ -3,7 +3,6 @@ export const API_BASE_URL = 'http://localhost/api';
 export const API_URLS = {
   categories: `${API_BASE_URL}/categorias`,
   login: `${API_BASE_URL}/auth/login`,
-  // logout: `${API_BASE_URL}/logout`, // TODO: See if it's worth implementing
   orders: `${API_BASE_URL}/pedidos`,
   products: `${API_BASE_URL}/productos`,
   providers: `${API_BASE_URL}/proveedores`,
