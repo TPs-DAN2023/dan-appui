@@ -6,7 +6,6 @@ export const API_URLS = {
   orders: `${API_BASE_URL}/pedidos`,
   products: `${API_BASE_URL}/productos`,
   providers: `${API_BASE_URL}/proveedores`,
-  register: `${API_BASE_URL}/auth/register`,
   users: `${API_BASE_URL}/usuarios`,
   userTypes: `${API_BASE_URL}/tipos-usuario`,
   validateToken: `${API_BASE_URL}/auth/validate`,
