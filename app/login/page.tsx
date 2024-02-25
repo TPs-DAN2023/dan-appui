@@ -1,17 +1,17 @@
 "use client";
 
-import { ConfirmButton } from "@/components";
-import { useState } from "react";
 import { authAPI } from "@/services";
-import { useRouter } from "next/navigation";
-import { ROUTES } from "@/constants";
-import { useUser } from "@/hooks";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ConfirmButton } from "@/components";
 import { faLock, faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ROUTES } from "@/constants";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useUser } from "@/hooks";
 
 export default function Login() {
   const { setUserLoggedIn } = useUser();
-  const [error, setError] = useState("");
+  const [error, setError] = useState("H");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -36,7 +36,7 @@ export default function Login() {
         setError("Error al loguearse:" + error.message);
       }
       setError(
-        "Un error desconocido ha ocurrido al intentar loguearse. Por favor, intente nuevamente."
+        "Ha ocurrido un error al intentar loguearse. Por favor, intente nuevamente."
       );
     } finally {
       setIsLoggingIn(false);
@@ -45,7 +45,20 @@ export default function Login() {
 
   return (
     <main className="relative h-screen flex-col flex items-center justify-center">
-      <main className="flex items-center justify-center">
+      <div className="flex flex-col w-full max-w-xl px-4 gap-y-2">
+        <article
+          className={`p-2 rounded-lg mx-4 opacity-90 text-center ${
+            error.length > 1 ? "bg-red-200 shadow-lg " : "bg-transparent"
+          }`}
+        >
+          <span
+            className={`text-xs font-bold" ${
+              error.length > 1 ? "text-red-700" : "text-transparent"
+            }`}
+          >
+            {error}
+          </span>
+        </article>
         <section className="flex flex-col p-14 rounded-lg mx-4 bg-blue-300 shadow-lg opacity-90">
           <header className="mb-6 text-3xl font-bold">
             TP Integrador - DAN 2023
@@ -57,6 +70,7 @@ export default function Login() {
                 className="p-2 rounded-md flex-grow bg-blue-50"
                 id="user"
                 onChange={(e) => setUser(e.target.value)}
+                onFocus={() => setError("H")}
                 placeholder="Usuario"
                 type="text"
                 value={user}
@@ -77,6 +91,7 @@ export default function Login() {
               <button
                 className="p-1 rounded-md bg-gray-300 mr-1 ml-1 hover:bg-gray-400 transition duration-200 ease-in-out text-sm"
                 onClick={() => setShowPassword(!showPassword)}
+                onFocus={() => setError("H")}
                 type="button"
               >
                 {showPassword ? "Ocultar" : "Mostrar"}
@@ -90,11 +105,10 @@ export default function Login() {
               >
                 {isLoggingIn ? "Ingresando..." : "Ingresar"}
               </ConfirmButton>
-              <span className="text-red-500 ml-4">{error}</span>
             </div>
           </form>
         </section>
-      </main>
+      </div>
     </main>
   );
 }
