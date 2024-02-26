@@ -1,18 +1,19 @@
-import { OrderState } from "@/enums/OrderState";
-import { IProvider, IOrderDetail, IUser } from ".";
-
+import { IOrderDetail, IOrderState, ICliente } from ".";
 // Julio: comento las que son parte de dan-ms-productos pero no de ms-pedidos
 export default interface IOrder {
   id?: string;
+  numeroPedido: number | string;
+  fecha: string;
+  observaciones: string;
+  total: number;
+  user: string; // Just userName
+  estados: IOrderState[];
+  detallePedido: IOrderDetail[];
+  cliente?: ICliente;
   // fechaGeneracion: string;
   // fechaRecepcion: string;
-  fecha: string;
-  user: IUser;
-  observaciones: string;
+  // user: IUser;
   // esCancelada: boolean;
-  proveedor: IProvider;
+  // proveedor: IProvider;
   // detalles: IOrderDetail[];
-  detallePedido: IOrderDetail[];
-  estados: OrderState[];
-  total: number;
 }
