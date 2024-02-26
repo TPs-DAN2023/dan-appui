@@ -1,45 +1,30 @@
-export default async function getProductsMock(userId: number) {
+import { IProduct } from "@/interfaces";
+
+export default  function getProductsMock(): IProduct[] {
   console.log("Buscando productos...");
 
-  // Wait randomly between 300 and 5000 ms for our 'request'
-  const wait = Math.floor(Math.random() * 300) + 200;
-  await new Promise((p) => setTimeout(p, wait));
+  // Retrieve categories data from localStorage
+  const categoriesData = JSON.parse(localStorage.getItem('mocks') || '[]').categorias;
+  // Retrieve providers data from localStorage
+  const providersData = JSON.parse(localStorage.getItem('mocks') || '[]').proveedores;
 
   return [
     {
       id: 1,
       nombre: "Pepsi",
       descripcion: "Qué rica gaseosa es!",
-      proveedorId: 3,
       stockActual: 10,
-      categoriaId: 9,
-      proveedor: {
-        id: 3,
-        nombre: "Jose Gimenez",
-        mail: "josegimenez@gmail.com",
-      },
-      categoria: {
-        id: 9,
-        nombre: "Abc",
-      },
+      proveedor: providersData.find((prov: any) => prov.id === 1),
+      categoria: categoriesData.find((cat: any) => cat.id === 5),
       precio: 100,
     },
     {
       id: 5,
       nombre: "Queso de oveja",
       descripcion: "Qué rico es!",
-      proveedorId: 3,
       stockActual: 10,
-      categoriaId: 1,
-      proveedor: {
-        id: 3,
-        nombre: "Jose Gimenez",
-        mail: "josegimenez@gmail.com",
-      },
-      categoria: {
-        id: 1,
-        nombre: "Tremendukis",
-      },
+      proveedor: providersData.find((prov: any) => prov.id === 2),
+      categoria: categoriesData.find((cat: any) => cat.id === 2),
       precio: 200,
     },
   ];

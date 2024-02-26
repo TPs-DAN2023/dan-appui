@@ -1,40 +1,32 @@
-export default async function getUsersMock(userId: number) {
+import { IUser } from "@/interfaces";
+
+export default function getUsersMock(): IUser[] {
   console.log("Buscando usuarios...");
 
-  // Wait randomly between 300 and 5000 ms for our 'request'
-  const wait = Math.floor(Math.random() * 300) + 200;
-  await new Promise((p) => setTimeout(p, wait));
+  // Retrieve userTypes data from localStorage
+  const userTypesData = JSON.parse(localStorage.getItem('mocks') || '[]').tiposUsuario;
 
   return [
     {
       id: 1,
       userName: "jperez",
-      password: "Administrador123!",
+      password: "**********",
       correoElectronico: "jperez@user.com",
-      tipoUsuario: {
-        id: 1,
-        tipo: "Vendedor",
-      },
+      tipoUsuario: userTypesData.find((tipo: any) => tipo.id === 1),
     },
     {
       id: 2,
       userName: "jrdoriguez",
-      password: "Administrador123!",
+      password: "**********",
       correoElectronico: "jrodriguez@user.com",
-      tipoUsuario: {
-        id: 2,
-        tipo: "Administrador",
-      },
+      tipoUsuario: userTypesData.find((tipo: any) => tipo.id === 2),
     },
     {
       id: 3,
       userName: "ppicapiedra",
-      password: "Administrador123!",
+      password: "**********",
       correoElectronico: "ppcapiedra@user.com",
-      tipoUsuario: {
-        id: 2,
-        tipo: "Vendedor",
-      },
+      tipoUsuario: userTypesData.find((tipo: any) => tipo.id === 2),
     },
   ];
 }

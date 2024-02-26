@@ -1,10 +1,7 @@
-export default async function getCategoriesMock() {
+import { ICategory } from "@/interfaces";
+
+export default function getCategoriesMock(): ICategory[] {
   console.log("Buscando categorías...");
-
-  // Wait randomly between 300 and 5000 ms for our 'request'
-  const wait = Math.floor(Math.random() * 300) + 200;
-  await new Promise((p) => setTimeout(p, wait));
-
   return [
     {
       id: 1,

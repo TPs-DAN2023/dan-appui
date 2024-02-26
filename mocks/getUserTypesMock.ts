@@ -1,18 +1,16 @@
-export default async function getUserTypesMock() {
+import { USER_TYPES } from "@/constants";
+import { IUserType } from "@/interfaces";
+
+export default function getUserTypesMock(): IUserType[] {
   console.log("Buscando tipos de usuario...");
-
-  // Wait randomly between 300 and 5000 ms for our 'request'
-  const wait = Math.floor(Math.random() * 300) + 200;
-  await new Promise((p) => setTimeout(p, wait));
-
   return [
     {
       id: 1,
-      tipo: "Administrador",
+      tipo: USER_TYPES.ADMIN,
     },
     {
       id: 2,
-      tipo: "Vendedor",
+      tipo: USER_TYPES.USER,
     },
   ];
 }

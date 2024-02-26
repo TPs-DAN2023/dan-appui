@@ -1,14 +1,11 @@
-export default async function getProvidersMock() {
+import { IProvider } from "@/interfaces";
+
+export default function getProvidersMock(): IProvider[] {
   console.log("Buscando proveedores...");
-
-  // Wait randomly between 300 and 5000 ms for our 'request'
-  const wait = Math.floor(Math.random() * 300) + 200;
-  await new Promise((p) => setTimeout(p, wait));
-
   return [
     {
         id: 1,
-        nombre: "Jose Gimenez",
+        nombre: "Jose Giménez",
         mail: "josegimenez@gmail.com",
     },
     {
