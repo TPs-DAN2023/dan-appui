@@ -6,3 +6,4 @@ export * as categoriesAPI from "./categoriesAPI";
 export * as userTypesAPI from "./userTypesAPI";
 export * as productsAPI from "./productsAPI";
 export * as ordersAPI from "./ordersAPI";
+export { default as apiCall } from "./api";
