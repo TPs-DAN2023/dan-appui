@@ -1,32 +1,68 @@
 "use client";
-import { API_URLS } from "@/services";
+import { API_URLS, apiCall, usersAPI } from "@/services";
 import {
   List,
   OrderDetails,
   Item,
   Layout,
   Home,
-  CreateOrder,
   Loading,
   ConfirmDeletePopup,
   Error,
 } from "@/components";
-import { useState } from "react";
-import { extractOrderAttributes } from "@/utils";
+import { useEffect, useState } from "react";
+import { extractOrderAttributes, hasUserType } from "@/utils";
 import { IOrder } from "@/interfaces";
 import { faTruckField } from "@fortawesome/free-solid-svg-icons";
 import { withAuth } from "@/hocs";
-import { useFetch } from "@/hooks";
+import { ROUTES, USER_TYPES } from "@/constants";
+import { useRouter } from "next/navigation";
 
 function Pedidos() {
-  const {
-    data: orders,
-    error,
-    isLoading,
-  } = useFetch<IOrder[]>(API_URLS.orders, "GET");
+  const [orders, setOrders] = useState<IOrder[]>([]);
   const [selectedItem, setSelectedItem] = useState<IOrder>();
-  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
   const [isDeletingOrder, setIsDeletingOrder] = useState(false);
+  const [error, setError] = useState<Error>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [reFetch, setReFetch] = useState(false);
+
+  const router = useRouter();
+
+  const handleNavigation = async (route: string) => {
+    await router.push(route);
+  };
+
+  useEffect(() => {
+    setIsLoading(true);
+    async function fetchData() {
+      try {
+        const data = await apiCall<IOrder[]>(API_URLS.orders, "GET");
+        setOrders(data);
+      } catch (error) {
+        setError(error as Error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [reFetch]);
+
+  const handleDelete = async () => {
+    try {
+      const data = await apiCall(
+        `${API_URLS.orders}/${selectedItem?.id}`,
+        "DELETE"
+      );
+      console.log("Pedido eliminado", data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setReFetch(!reFetch);
+      setIsDeletingOrder(false);
+      setSelectedItem(undefined);
+    }
+  };
 
   const isPopupOpen = isDeletingOrder;
 
@@ -72,7 +108,7 @@ function Pedidos() {
         </div>
         <div className="flex flex-col flex-grow overflow-x-hidden overflow-y-scroll">
           <Home
-            show={!isCreatingOrder && !selectedItem}
+            show={!selectedItem}
             icon={orders && orders.length > 0 ? faTruckField : undefined}
             title="Pedidos"
             subtitle={
@@ -82,23 +118,25 @@ function Pedidos() {
             }
             description={
               orders && orders.length > 0
-                ? "Puede visualizar, editar o eliminar cualquier pedido de la lista."
-                : "Cree un producto para comenzar."
+                ? hasUserType(USER_TYPES.ADMIN)
+                  ? "Puede visualizar, editar o eliminar cualquier pedido de la lista."
+                  : "Puede visualizar los detalles de cualquier pedido de la lista."
+                : hasUserType(USER_TYPES.ADMIN)
+                ? "No se ha creado ningún pedido."
+                : "Cree un nuevo pedido para comenzar."
             }
-            buttonText="Crear pedido"
-            onClick={() => setIsCreatingOrder(true)}
+            buttonText={
+              hasUserType(USER_TYPES.USER)
+                ? "Agregar productos para crear pedido"
+                : ""
+            }
+            onClick={() => handleNavigation(ROUTES.PRODUCTS)}
+            showButton={hasUserType(USER_TYPES.USER)}
           />
           <OrderDetails
             show={!!selectedItem}
             order={selectedItem}
             onClearSelectionPressed={() => setSelectedItem(undefined)}
-          />
-          <CreateOrder
-            show={!selectedItem && isCreatingOrder}
-            onCancel={() => {
-              setIsCreatingOrder(false);
-              setSelectedItem(undefined);
-            }}
           />
         </div>
       </Layout>
@@ -106,7 +144,7 @@ function Pedidos() {
         <div className="absolute inset-0 flex items-center justify-center z-10">
           <ConfirmDeletePopup
             show={isDeletingOrder}
-            onDelete={() => {}}
+            onDelete={handleDelete}
             onCancel={() => setIsDeletingOrder(false)}
             messageTitle={`¿Está seguro que desea eliminar el pedido seleccionado (id=${selectedItem?.id})?`}
           />

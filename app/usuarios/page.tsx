@@ -1,5 +1,5 @@
 "use client";
-import { API_URLS } from "@/services";
+import { API_URLS, apiCall } from "@/services";
 import {
   List,
   Layout,
@@ -10,23 +10,53 @@ import {
   ConfirmDeletePopup,
   Error,
 } from "@/components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { extractUserAttributes } from "@/utils";
 import { IUser } from "@/interfaces";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
 import { withAuth } from "@/hocs";
-import { useFetch } from "@/hooks";
 
 function Usuarios() {
-  const {
-    data: users,
-    error,
-    isLoading,
-  } = useFetch<IUser[]>(API_URLS.users, "GET");
+  const [users, setUsers] = useState<IUser[]>([]);
   const [selectedItem, setSelectedItem] = useState<IUser>();
   const [isCreatingUser, setIsCreatingUser] = useState(false);
   const [isUpdatingUser, setIsUpdatingUser] = useState(false);
   const [isDeletingUser, setIsDeletingUser] = useState(false);
+  const [error, setError] = useState<Error>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [reFetch, setReFetch] = useState(false);
+
+  useEffect(() => {
+    setIsLoading(true);
+    async function fetchData() {
+      try {
+        const data = await apiCall<IUser[]>(API_URLS.users, "GET");
+        setUsers(data);
+      } catch (error) {
+        setError(error as Error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [reFetch]);
+
+  const handleDelete = async () => {
+    try {
+      const data = await apiCall(
+        `${API_URLS.users}/${selectedItem?.id}`,
+        "DELETE"
+      );
+      console.log("Usuario eliminado", data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsDeletingUser(false);
+      setSelectedItem(undefined);
+      setReFetch(!reFetch);
+    }
+  };
 
   const isPopupOpen = isDeletingUser;
 
@@ -53,7 +83,6 @@ function Usuarios() {
             onAddToCart,
             onEdit
           ) => {
-            console.log("onEdit", onEdit);
             const userAttributes = extractUserAttributes(item as IUser);
             return (
               <Item
@@ -94,6 +123,7 @@ function Usuarios() {
             setIsUpdatingUser(false);
             setIsCreatingUser(false);
             setSelectedItem(undefined);
+            setReFetch(!reFetch);
           }}
           user={selectedItem}
         />
@@ -101,7 +131,7 @@ function Usuarios() {
           <div className="absolute inset-0 flex items-center justify-center z-10">
             <ConfirmDeletePopup
               show={isDeletingUser}
-              onDelete={() => {}}
+              onDelete={handleDelete}
               onCancel={() => setIsDeletingUser(false)}
               messageTitle={`¿Está seguro que desea eliminar el usuario seleccionado (id=${selectedItem?.id})?`}
             />

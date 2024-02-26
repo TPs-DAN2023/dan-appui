@@ -1,6 +1,6 @@
 "use client";
 
-import { ConfirmButton } from "@/components";
+import { Button } from "@/components";
 import { useState } from "react";
 
 export default function Test() {
@@ -23,27 +23,27 @@ export default function Test() {
     <>
       <h1 className="flex justify-center">Elegir a que MS quiere pegarle</h1>
       <section className="flex gap-4 justify-center mt-5">
-        <ConfirmButton
+        <Button
           onClick={() => {
             checkMicroService("http://localhost/api/usuarios");
           }}
         >
           Check Usuarios
-        </ConfirmButton>
-        <ConfirmButton
+        </Button>
+        <Button
           onClick={() => {
             checkMicroService("http://localhost/api/productos");
           }}
         >
           Check Productos
-        </ConfirmButton>
-        <ConfirmButton
+        </Button>
+        <Button
           onClick={() => {
             checkMicroService("http://localhost/api/pedidos");
           }}
         >
           Check Pedidos
-        </ConfirmButton>
+        </Button>
       </section>
     </>
   );
