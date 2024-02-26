@@ -1,13 +1,22 @@
 "use client";
 
 import { authAPI } from "@/services";
-import { ConfirmButton } from "@/components";
+import { Button } from "@/components";
 import { faLock, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ROUTES } from "@/constants";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "@/hooks";
+import {
+  mockUsers,
+  mockProducts,
+  mockOrders,
+  mockCategories,
+  mockProviders,
+  mockUserTypes,
+  mockSession,
+} from "@/mocks";
 
 export default function Login() {
   const { setUserLoggedIn } = useUser();
@@ -17,18 +26,53 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [user, setUser] = useState("");
 
+  const [developMode, setDevelopMode] = useState(false);
+  const [devUserType, setDevUserType] = useState(1);
+
+  useEffect(() => {
+    setDevelopMode(localStorage.getItem("developMode") === "true");
+  }, []);
+
   const router = useRouter();
+
+  const handleChangeMode = () => {
+    localStorage.setItem("developMode", (!developMode).toString());
+    location.reload();
+  };
 
   const handleLogin = async (event: any) => {
     // Use preventDefault to stop the page from refreshing when the form is submitted
     event.preventDefault();
     setIsLoggingIn(true);
     try {
-      const result = await authAPI.login(user, password);
+      console.log("Logging in...");
+      if (developMode) {
+        console.log("Development mode");
+        // Initialize localStorage with mock data
+        localStorage.setItem(
+          "mocks",
+          JSON.stringify({
+            tiposUsuario: mockUserTypes(),
+            categorias: mockCategories(),
+            proveedores: mockProviders(),
+            usuarios: mockUsers(),
+            productos: mockProducts(),
+            pedidos: mockOrders(),
+          })
+        );
 
-      // Store the session in localStorage
-      localStorage.setItem("session", JSON.stringify(result));
+        // Set the mock session
+        localStorage.setItem(
+          "session",
+          JSON.stringify(mockSession(devUserType))
+        );
+      } else {
+        console.log("Production mode");
+        const result = await authAPI.login(user, password);
 
+        // Store the session in localStorage
+        localStorage.setItem("session", JSON.stringify(result));
+      }
       setUserLoggedIn(true);
       await router.push(ROUTES.HOME);
     } catch (error) {
@@ -44,15 +88,15 @@ export default function Login() {
   };
 
   return (
-    <main className="relative h-screen flex-col flex items-center justify-center">
-      <div className="flex flex-col w-full max-w-xl px-4 gap-y-2">
+    <main className="flex flex-col h-screen justify-between items-center">
+      <div className="flex-grow flex flex-col w-full max-w-xl px-4 gap-y-2 items-center justify-center">
         <article
           className={`p-2 rounded-lg mx-4 opacity-90 text-center ${
             error.length > 1 ? "bg-red-200 shadow-lg " : "bg-transparent"
           }`}
         >
           <span
-            className={`text-xs font-bold" ${
+            className={`text-xs font-bold " ${
               error.length > 1 ? "text-red-700" : "text-transparent"
             }`}
           >
@@ -98,17 +142,30 @@ export default function Login() {
               </button>
             </div>
             <div className="flex flex-col items-center justify-center">
-              <ConfirmButton
+              <Button
                 type="submit"
                 className="pl-10 pr-10"
                 disabled={isLoggingIn}
               >
                 {isLoggingIn ? "Ingresando..." : "Ingresar"}
-              </ConfirmButton>
+              </Button>
             </div>
           </form>
         </section>
       </div>
+      <Button onClick={handleChangeMode} color="green">
+        Probar con {developMode ? "Docker" : "Mocks"}
+      </Button>
+      {developMode && (
+        <select
+          className="border-2 border-gray-300 p-2 m-2"
+          value={devUserType}
+          onChange={(e) => setDevUserType(parseInt(e.target.value))}
+        >
+          <option value="1">Usuario ADMIN</option>
+          <option value="2">Usuario USER</option>
+        </select>
+      )}
     </main>
   );
 }
