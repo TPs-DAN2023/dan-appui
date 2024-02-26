@@ -1,4 +1,4 @@
-export enum OrderState {
+enum OrderState {
   RECIBIDO = 'RECIBIDO',
   EN_PROCESO = 'EN_PROCESO',
   SIN_STOCK = 'SIN_STOCK',
@@ -7,3 +7,5 @@ export enum OrderState {
   EN_DISTRIBUCION = 'EN_DISTRIBUCION',
   ENTREGADO = 'ENTREGADO'
 }
+
+export default OrderState;
