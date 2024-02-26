@@ -1,4 +1,4 @@
-import { CancelButton, ConfirmButton, FormInput } from "@/components";
+import { Button, FormInput } from "@/components";
 import { IProduct } from "@/interfaces";
 import { useEffect, useState } from "react";
 
@@ -22,8 +22,10 @@ export default function AddToCartPopup({
   useEffect(() => {
     const cart = JSON.parse(localStorage.getItem("cart") || "[]");
     const existingProductIndex = cart.findIndex(
-      (item: { id: number }) => item.id === product?.id
+      (item: { product: IProduct; selectedStock: number }) =>
+        item.product.id === product?.id
     );
+    console.log("existingProductIndex", existingProductIndex);
     setStock(1);
     setMaxStockAvailable(
       existingProductIndex !== -1
@@ -83,10 +85,12 @@ export default function AddToCartPopup({
             }}
           />
           <div className="flex justify-around mt-4">
-            <CancelButton onClick={handleCancel}>Cancelar</CancelButton>
-            <ConfirmButton type="submit" disabled={isAddingToCart || !stock}>
+            <Button color="red" onClick={handleCancel}>
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={isAddingToCart || !stock}>
               {isAddingToCart ? addingToCardText : addToCartText}
-            </ConfirmButton>
+            </Button>
           </div>
         </form>
       </div>

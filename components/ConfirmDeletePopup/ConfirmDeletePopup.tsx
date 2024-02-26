@@ -1,8 +1,8 @@
-import { ConfirmButton, CancelButton } from "@/components";
+import { Button } from "@/components";
 
 interface ConfirmDeletePopupProps {
   show: boolean;
-  onDelete: VoidFunction;
+  onDelete: (id: string) => void;
   onCancel: VoidFunction;
   messageTitle: string;
 }
@@ -23,8 +23,10 @@ export default function ConfirmDeletePopup({
         <h2 className="text-xl font-bold mb-4">{messageTitle}</h2>
         <p className="mb-4 text-center">Si elimina, ¡no hay vuelta atrás!</p>
         <div className="flex justify-around mt-4">
-          <CancelButton onClick={onCancel}>Cancelar</CancelButton>
-          <ConfirmButton onClick={onDelete}>Eliminar</ConfirmButton>
+          <Button color="red" onClick={onCancel}>
+            Cancelar
+          </Button>
+          <Button onClick={onDelete}>Eliminar</Button>
         </div>
       </div>
     </div>

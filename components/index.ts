@@ -1,8 +1,6 @@
 export { default as AddToCartPopup } from "./AddToCartPopup/AddToCartPopup";
-export { default as CancelButton } from "./CancelButton/CancelButton";
-export { default as CartButton } from "./CartButton/CartButton";
 export { default as CartProducts } from "./CartProducts/CartProducts"
-export { default as ConfirmButton } from "./ConfirmButton/ConfirmButton"
+export { default as Button } from "./Button/Button"
 export { default as ConfirmCancelPopup } from "./ConfirmCancelPopup/ConfirmCancelPopup";
 export { default as ConfirmDeletePopup } from "./ConfirmDeletePopup/ConfirmDeletePopup";
 export { default as CreateCategoryPopup } from "./CreateCategoryPopup/CreateCategoryPopup";
@@ -25,3 +23,4 @@ export { default as OrderDetails } from "./OrderDetails/OrderDetails";
 export { default as ProductDetails } from "./ProductDetails/ProductDetails"
 export { default as RemoveFromCartPopup } from "./RemoveFromCartPopup/RemoveFromCartPopup";
 export { default as UserDetails } from "./UserDetails/UserDetails"
+export { default as EmptyCart } from "./EmptyCart/EmptyCart"

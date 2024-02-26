@@ -1,4 +1,4 @@
-import { ConfirmButton, CancelButton } from "@/components";
+import { Button } from "@/components";
 
 interface ConfirmCancelPopupProps {
   show: boolean;
@@ -25,8 +25,10 @@ export default function ConfirmCancelPopup({
           Si cancela, los datos ingresados se perderán.
         </p>
         <div className="flex justify-around mt-4">
-          <CancelButton onClick={onCancel}>Cancelar</CancelButton>
-          <ConfirmButton onClick={onConfirm}>Confirmar</ConfirmButton>
+          <Button color="red" onClick={onCancel}>
+            Cancelar
+          </Button>
+          <Button onClick={onConfirm}>Confirmar</Button>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { API_URLS } from "@/services";
-import { CancelButton, ConfirmButton, FormInput } from "@/components";
+import { Button, FormInput } from "@/components";
 import { ICategory } from "@/interfaces";
 import { useState } from "react";
 import { getUserToken } from "@/utils";
@@ -73,10 +73,12 @@ export default function CreateCategory({
             }
           />
           <div className="flex justify-around mt-4">
-            <CancelButton onClick={handleCancel}>Cancelar</CancelButton>
-            <ConfirmButton type="submit" disabled={isCreatingCategory}>
+            <Button color="red" onClick={handleCancel}>
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={isCreatingCategory}>
               {isCreatingCategory ? "Creando..." : "Crear"}
-            </ConfirmButton>
+            </Button>
           </div>
         </form>
       </div>
