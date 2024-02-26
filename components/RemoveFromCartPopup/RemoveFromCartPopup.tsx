@@ -1,4 +1,4 @@
-import { CancelButton, ConfirmButton } from "@/components";
+import { Button } from "@/components";
 import { IProduct } from "@/interfaces";
 import { useEffect, useState } from "react";
 
@@ -21,8 +21,12 @@ export default function RemoveFromCartPopup({
   useEffect(() => {
     const cart = JSON.parse(localStorage.getItem("cart") || "[]");
     const existingProductIndex = cart.findIndex(
-      (item: { id: number }) => item.id === product?.id
+      (item: { product: IProduct; selectedStock: number }) =>
+        item.product.id === product?.id
     );
+
+    console.log("existingProductIndex", existingProductIndex);
+
     if (existingProductIndex !== -1) {
       setStock(cart[existingProductIndex].selectedStock);
     }
@@ -66,10 +70,12 @@ export default function RemoveFromCartPopup({
         </h2>
         <p className="mb-4 text-center">Se quitarán todas las unidades.</p>
         <div className="flex justify-around mt-4">
-          <CancelButton onClick={handleCancel}>Cancelar</CancelButton>
-          <ConfirmButton onClick={handleRemove} disabled={isRemovingFromCart}>
+          <Button color="red" onClick={handleCancel}>
+            Cancelar
+          </Button>
+          <Button onClick={handleRemove} disabled={isRemovingFromCart}>
             {isRemovingFromCart ? removingFromCardText : removeFromCartText}
-          </ConfirmButton>
+          </Button>
         </div>
       </div>
     </div>

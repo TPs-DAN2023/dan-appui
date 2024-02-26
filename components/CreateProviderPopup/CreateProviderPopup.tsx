@@ -1,6 +1,6 @@
 import { API_URLS } from "@/services";
 import { useState } from "react";
-import { CancelButton, ConfirmButton, FormInput } from "@/components";
+import { Button, FormInput } from "@/components";
 import { IProvider } from "@/interfaces";
 import { getUserToken } from "@/utils";
 
@@ -81,10 +81,12 @@ export default function CreateProvider({
             onChange={(e) => setProvider({ ...provider, mail: e.target.value })}
           />
           <div className="flex justify-around mt-4">
-            <CancelButton onClick={handleCancel}>Cancelar</CancelButton>
-            <ConfirmButton type="submit" disabled={isCreatingProvider}>
+            <Button color="red" onClick={handleCancel}>
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={isCreatingProvider}>
               {isCreatingProvider ? "Creando..." : "Crear"}
-            </ConfirmButton>
+            </Button>
           </div>
         </form>
       </div>

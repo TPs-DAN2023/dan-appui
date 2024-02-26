@@ -33,12 +33,12 @@ export default function Item<T>({
           {title}
         </p>
         <div className="flex gap-x-3">
-          {onRemoveFromCart && (
+          {onRemoveFromCart && hasUserType(USER_TYPES.USER) && (
             <IconButton onClick={() => onRemoveFromCart(item)}>
               <FontAwesomeIcon icon={faCartArrowDown} color="red" />
             </IconButton>
           )}
-          {onAddToCart && (
+          {onAddToCart && hasUserType(USER_TYPES.USER) && (
             <IconButton
               onClick={() => onAddToCart(item)}
               disabled={disabledAddToCartButton}

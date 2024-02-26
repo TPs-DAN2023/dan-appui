@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ConfirmButton } from "@/components";
+import { Button } from "@/components";
 
 interface ErrorProps {
   message: string;
@@ -14,7 +14,7 @@ export default function Error({ message }: ErrorProps) {
       </p>
       <p className="mt-4 text-center text-red-500">{message}</p>
       <Link href="/">
-        <ConfirmButton>Regresar</ConfirmButton>
+        <Button>Regresar</Button>
       </Link>
     </div>
   );

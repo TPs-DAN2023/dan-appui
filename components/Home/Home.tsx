@@ -1,4 +1,4 @@
-import { ConfirmButton } from "@/components";
+import { Button } from "@/components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
 
@@ -10,6 +10,7 @@ interface HomeProps {
   description: string;
   buttonText: string;
   onClick: () => void;
+  showButton?: boolean;
 }
 
 export default function Home({
@@ -20,6 +21,7 @@ export default function Home({
   description,
   buttonText,
   onClick,
+  showButton = true,
 }: HomeProps) {
   if (!show) {
     return null;
@@ -34,7 +36,7 @@ export default function Home({
         <hr />
         <p className="text-medium text-center">{description}</p>
       </div>
-      <ConfirmButton onClick={onClick}>{buttonText}</ConfirmButton>
+      {showButton && <Button onClick={onClick}>{buttonText}</Button>}
     </div>
   );
 }

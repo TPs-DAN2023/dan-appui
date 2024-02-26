@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import {
   CreateCategoryPopup,
   CreateProviderPopup,
-  ConfirmButton,
-  CancelButton,
+  Button,
   OpenDialogButton,
   FormInput,
   ConfirmCancelPopup,
 } from "@/components";
-import { getProvidersMock, getCategoriesMock, addProductMock } from "@/mocks";
+// import { getProvidersMock, getCategoriesMock, addProductMock } from "@/mocks";
 import { ICategory, IProduct, IProvider } from "@/interfaces";
+import { API_URLS, apiCall } from "@/services";
 
 interface CreateOrUpdateProductProps {
   show: boolean;
@@ -32,86 +32,85 @@ export default function CreateOrUpdateProduct({
   product: productToUpdate,
 }: CreateOrUpdateProductProps) {
   const [product, setProduct] = useState<IProduct>(emptyProduct);
-
-  useEffect(() => {
-    if (productToUpdate) {
-      console.log("productToUpdate");
-      fetchCategories();
-      fetchProviders();
-      setProduct(productToUpdate);
-    } else {
-      console.log("emptyProduct");
-      setProduct(emptyProduct);
-      setCategories([]);
-      setProviders([]);
-    }
-  }, [productToUpdate, show]);
-
   const [isCreatingCategory, setIsCreatingCategory] = useState(false);
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [isCreatingProvider, setIsCreatingProvider] = useState(false);
   const [providers, setProviders] = useState<IProvider[]>([]);
   const [isCanceling, setIsCanceling] = useState(false);
   const [isCreatingProduct, setIsCreatingProduct] = useState(false);
+  const [reFetch, setReFetch] = useState(false);
 
-  const fetchCategories = async () => {
-    // Here you can call your API to fetch the providers
-    // const res = await fetch("http://localhost/api/categorias");
-    console.log("Fetching categories...");
-    const res = await getCategoriesMock();
-    // const data = await res.json();
-    const data = res;
-    if (!data) {
-      return {
-        notFound: true,
-      };
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const fetchCategories = await apiCall(`${API_URLS.categories}`, "GET");
+        const fetchProviders = await apiCall(`${API_URLS.providers}`, "GET");
+        if (!productToUpdate) {
+          setCategories(fetchCategories as ICategory[]);
+          setProviders(fetchProviders as IProvider[]);
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
-    console.log(data);
-    setCategories(data);
-  };
 
-  const fetchProviders = async () => {
-    // Here you can call your API to fetch the providers
-    // const res = await fetch("http://localhost/api/proveedores");
-    console.log("Fetching providers...");
-    const res = await getProvidersMock();
-    // const data = await res.json();
-    const data = res;
-    if (!data) {
-      return {
-        notFound: true,
-      };
+    if (productToUpdate) {
+      setProduct(productToUpdate);
+    } else {
+      setProduct((p) => {
+        if (!p) {
+          return emptyProduct;
+        }
+        return p;
+      });
+      setCategories([]);
+      setProviders([]);
     }
-    console.log(data);
-    setProviders(data);
-  };
 
-  const handleCancel = (event: React.MouseEvent) => {
+    fetchData();
+  }, [productToUpdate, show, reFetch]);
+
+  const handleCancel = (event: React.FormEvent) => {
     event.preventDefault();
     setProduct(emptyProduct);
     setIsCanceling(false);
     setIsCreatingCategory(false);
     setIsCreatingProvider(false);
-    console.log("Cancelando...");
+    console.log(
+      `Cancelando la ${
+        productToUpdate ? "actualización" : "creación"
+      } del producto...`
+    );
     onCancel();
   };
 
-  const handleSubmit = (event: any) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsCreatingProduct(true);
-    // Here you can call your API to create the provider
-    console.log(`Producto ${productToUpdate ? "actualizado" : "creado"}!`);
-    addProductMock(product).then((data) => {
-      console.log(data);
-      setIsCreatingProduct(false);
+    try {
+      const data = await apiCall(
+        `${API_URLS.products}${
+          productToUpdate ? `/${productToUpdate.id}` : ""
+        }`,
+        productToUpdate ? "PUT" : "POST",
+        product
+      );
+      console.log(
+        `Producto ${productToUpdate ? "actualizado" : "creado"}!`,
+        data
+      );
       handleCancel(event);
-    });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsCreatingProduct(false);
+    }
   };
 
   const allInputsAreValid = () => {
     return (
       product.nombre.length < 50 &&
-      product.descripcion.length < 100 &&
+      product.descripcion!.length < 100 &&
       product.precio >= 0 &&
       product.precio <= 10000 &&
       product.stockActual >= 0 &&
@@ -134,7 +133,9 @@ export default function CreateOrUpdateProduct({
           isPopupOpen ? "opacity-50" : ""
         }`}
       >
-        <h1 className="text-2xl font-bold">Crear producto</h1>
+        <h1 className="text-2xl font-bold">
+          {productToUpdate ? "Actualizar" : "Crear"} producto
+        </h1>
         <form onSubmit={handleSubmit} className="flex flex-col">
           <FormInput
             type="text"
@@ -183,7 +184,7 @@ export default function CreateOrUpdateProduct({
               <select
                 className="border-2 border-gray-300 p-2 m-2"
                 value={product.categoria?.id}
-                onFocus={fetchCategories}
+                onFocus={() => setReFetch(!reFetch)}
                 required
                 onChange={(e) =>
                   setProduct({
@@ -214,7 +215,7 @@ export default function CreateOrUpdateProduct({
               <select
                 className="border-2 border-gray-300 p-2 m-2"
                 value={product.proveedor?.id}
-                onFocus={fetchProviders}
+                onFocus={() => setReFetch(!reFetch)}
                 required
                 onChange={(e) =>
                   setProduct({
@@ -243,15 +244,16 @@ export default function CreateOrUpdateProduct({
             </div>
           </div>
           <footer className="flex justify-around mt-5">
-            <CancelButton
+            <Button
+              color="red"
               type="button"
               onClick={(event) =>
                 productToUpdate ? handleCancel(event) : setIsCanceling(true)
               }
             >
               Cancelar
-            </CancelButton>
-            <ConfirmButton
+            </Button>
+            <Button
               type="submit"
               disabled={!allInputsAreValid() || isCreatingProduct}
             >
@@ -262,7 +264,7 @@ export default function CreateOrUpdateProduct({
                 : isCreatingProduct
                 ? "Creando..."
                 : "Crear"}
-            </ConfirmButton>
+            </Button>
           </footer>
         </form>
       </div>

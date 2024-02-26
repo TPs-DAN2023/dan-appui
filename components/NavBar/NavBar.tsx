@@ -3,12 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShop, faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { ROUTES, USER_TYPES } from "@/constants";
 import Link from "next/link";
-import {
-  CancelButton,
-  CartButton,
-  ConfirmButton,
-  IconButton,
-} from "@/components";
+import { Button, IconButton } from "@/components";
 import { useUser } from "@/hooks";
 import { hasUserType } from "@/utils";
 
@@ -42,32 +37,35 @@ export default function NavBar() {
           <h1 className="pl-4">Marketplace B2B</h1>
         </div>
         <div className="flex items-center justify-center gap-x-5">
-          <ConfirmButton
+          <Button
             onClick={() => handleNavigation(ROUTES.ORDERS)}
             className="ml-2"
           >
             Pedidos
-          </ConfirmButton>
-          <ConfirmButton
+          </Button>
+          <Button
             onClick={() => handleNavigation(ROUTES.PRODUCTS)}
             className="ml-2"
           >
             Productos
-          </ConfirmButton>
+          </Button>
           {hasUserType(USER_TYPES.ADMIN) && (
-            <ConfirmButton
+            <Button
               onClick={() => handleNavigation(ROUTES.USERS)}
               className="ml-2"
             >
               Usuarios
-            </ConfirmButton>
+            </Button>
           )}
-          <CartButton
-            onClick={() => handleNavigation(ROUTES.CART)}
-            className="ml-2"
-          >
-            Ver carrito ({cart.length})
-          </CartButton>
+          {hasUserType(USER_TYPES.USER) && (
+            <Button
+              color="green"
+              onClick={() => handleNavigation(ROUTES.CART)}
+              className="ml-2"
+            >
+              Ver carrito ({cart.length})
+            </Button>
+          )}
         </div>
         <div className="flex items-center gap-x-5">
           <FontAwesomeIcon icon={faUserCircle} className="w-7 h-7" />
@@ -77,9 +75,9 @@ export default function NavBar() {
               ? session.userName.toUpperCase()
               : "USUARIO"}
           </span>
-          <CancelButton disabled={loading} onClick={handleLogout}>
+          <Button color="red" disabled={loading} onClick={handleLogout}>
             {loading ? "Saliendo..." : "Salir"}
-          </CancelButton>
+          </Button>
         </div>
       </div>
     </>

@@ -1,5 +1,5 @@
 import { API_URLS } from "@/services";
-import { CancelButton, ConfirmButton, FormInput } from "@/components";
+import { Button, FormInput } from "@/components";
 import { IUserType } from "@/interfaces";
 import { useState } from "react";
 import { getUserToken } from "@/utils";
@@ -70,12 +70,12 @@ export default function CreateUserType({
             onChange={(e) => setUserType({ ...userType, tipo: e.target.value })}
           />
           <div className="flex justify-around mt-4">
-            <CancelButton type="button" onClick={handleCancel}>
+            <Button color="red" type="button" onClick={handleCancel}>
               Cancelar
-            </CancelButton>
-            <ConfirmButton type="submit" disabled={isCreatingUserType}>
+            </Button>
+            <Button type="submit" disabled={isCreatingUserType}>
               {isCreatingUserType ? "Creando..." : "Crear"}
-            </ConfirmButton>
+            </Button>
           </div>
         </form>
       </div>

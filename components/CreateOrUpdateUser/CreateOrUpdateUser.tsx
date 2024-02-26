@@ -1,7 +1,6 @@
-import { API_URLS } from "@/services";
+import { API_URLS, apiCall } from "@/services";
 import {
-  CancelButton,
-  ConfirmButton,
+  Button,
   ConfirmCancelPopup,
   CreateUserTypePopup,
   FormInput,
@@ -9,7 +8,6 @@ import {
 } from "@/components";
 import { IUser, IUserType } from "@/interfaces";
 import React, { useEffect, useState } from "react";
-import { useFetch } from "@/hooks";
 
 interface CreateOrUpdateUserProps {
   show: boolean;
@@ -30,91 +28,80 @@ export default function CreateOrUpdateUser({
   user: userToUpdate,
 }: CreateOrUpdateUserProps) {
   const [user, setUser] = useState<IUser>(emptyUser);
-  const {
-    data: fetchedUser,
-    error: errorUser,
-    isLoading: isLoadingUser,
-  } = useFetch<IUser>(
-    userToUpdate ? API_URLS.users + "/" + userToUpdate.id : "",
-    "GET"
-  );
-
-  const {
-    data: fetchedUserTypes,
-    error: errorUserTypes,
-    isLoading: isLoadingUserTypes,
-  } = useFetch<IUserType[]>(API_URLS.userTypes, "GET");
-
-  useEffect(() => {
-    if (userToUpdate) {
-      setUser(fetchedUser || emptyUser);
-      setUserTypes(fetchedUserTypes || []);
-    } else {
-      setUser(emptyUser);
-      setUserTypes([]);
-    }
-  }, [userToUpdate, fetchedUser, fetchedUserTypes]);
-
   const [isCreatingUserType, setIsCreatingUserType] = useState(false);
   const [userTypes, setUserTypes] = useState<IUserType[]>([]);
   const [isCanceling, setIsCanceling] = useState(false);
   const [isCreatingUser, setIsCreatingUser] = useState(false);
+  const [reFetch, setReFetch] = useState(false);
 
-  const handleCancel = (event: React.MouseEvent) => {
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const fetchUserTypes = await apiCall(`${API_URLS.userTypes}`, "GET");
+        setUserTypes(fetchUserTypes as IUserType[]); // Explicitly type fetchUserTypes as IUserType[]
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchData();
+
+    if (userToUpdate) {
+      setUser(userToUpdate);
+    } else {
+      // I want to set the user emptyUser if user has no data in it
+      setUser((u) => {
+        if (!u) {
+          return emptyUser;
+        }
+        return u;
+      });
+      setUserTypes([]);
+    }
+  }, [userToUpdate, show, reFetch]);
+
+  const handleCancel = (event: React.FormEvent) => {
     event.preventDefault();
     setUser(emptyUser);
     setIsCanceling(false);
     setIsCreatingUserType(false);
-    console.log("Cancelando...");
+    console.log(
+      `Cancelando la ${
+        userToUpdate ? "actualización" : "creación"
+      } del usuario...`
+    );
     onCancel();
   };
 
-  const handleSubmit = async (event: any) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsCreatingUser(true);
-
+    console.log(
+      `Enviando ${userToUpdate ? "actualización" : "creación"} del usuario...`,
+      user
+    );
     try {
-      const response = await fetch(API_URLS.users, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-      });
-
-      if (!response.ok) {
-        throw new Error("Error creating user");
-      }
-
-      const newUser = await response.json();
-      console.log("Usuario creado!", newUser);
-      setIsCreatingUser(false);
+      const data = await apiCall(
+        `${API_URLS.users}${userToUpdate ? `/${userToUpdate.id}` : ""}`,
+        userToUpdate ? "PUT" : "POST",
+        user
+      );
+      console.log(`Usuario ${userToUpdate ? "actualizado" : "creado"}!`, data);
       handleCancel(event);
     } catch (error) {
       console.error(error);
+    } finally {
       setIsCreatingUser(false);
     }
-    // const {
-    //   data: user,
-    //   error: error,
-    //   isLoading: isLoading,
-    // } = useFetch<IUser>(API_URLS.users, "POST", user);
-    // console.log(`Usuario creado!`);
-    // setIsCreatingUser(false);
-    // handleCancel(event);
-    // addUserMock(user).then((res) => {
-    //   console.log(res);
-    //   setIsCreatingUser(false);
-    //   handleCancel(event);
-    // });
   };
 
   const allInputsAreValid = () => {
     return (
-      user.userName.length > 5 &&
-      user.password.length > 12 &&
-      user.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{12,}$/) &&
+      user.userName.length > 3 &&
+      user.password!.length > 12 &&
+      user.password!.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{12,}$/) &&
       user.correoElectronico.length > 5 &&
+      user.correoElectronico.includes("@") &&
       user.tipoUsuario
     );
   };
@@ -132,11 +119,13 @@ export default function CreateOrUpdateUser({
           isPopupOpen ? "opacity-50" : ""
         }`}
       >
-        <h1 className="text-2xl font-bold">Crear usuario</h1>
+        <h1 className="text-2xl font-bold">
+          {userToUpdate ? "Actualizar" : "Crear"} usuario
+        </h1>
         <form onSubmit={handleSubmit} className="flex flex-col">
           <FormInput
             type="text"
-            placeholder="UserName del usuario"
+            placeholder="Username del usuario"
             value={user.userName}
             required
             onChange={(e) => setUser({ ...user, userName: e.target.value })}
@@ -161,7 +150,7 @@ export default function CreateOrUpdateUser({
             <select
               className="border-2 border-gray-300 p-2 m-2"
               value={user.tipoUsuario?.id}
-              onFocus={() => console.log(user.tipoUsuario?.id)}
+              onFocus={() => setReFetch(!reFetch)}
               required
               onChange={(e) =>
                 setUser({
@@ -183,21 +172,23 @@ export default function CreateOrUpdateUser({
             </select>
             <OpenDialogButton
               type="button"
+              disabled={true}
               onClick={() => setIsCreatingUserType(true)}
             >
               + Crear tipo usuario
             </OpenDialogButton>
           </div>
           <footer className="flex justify-around mt-5">
-            <CancelButton
+            <Button
+              color="red"
               type="button"
               onClick={(event) =>
                 userToUpdate ? handleCancel(event) : setIsCanceling(true)
               }
             >
               Cancelar
-            </CancelButton>
-            <ConfirmButton
+            </Button>
+            <Button
               type="submit"
               disabled={!allInputsAreValid() || isCreatingUser}
             >
@@ -208,7 +199,7 @@ export default function CreateOrUpdateUser({
                 : isCreatingUser
                 ? "Creando..."
                 : "Crear"}
-            </ConfirmButton>
+            </Button>
           </footer>
         </form>
       </div>
