@@ -1,7 +1,7 @@
 import { Button, FormInput } from "@/components";
 import { IProduct } from "@/interfaces";
 import { API_URLS, apiCall } from "@/services";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface UpdateStockPopupProps {
   product?: IProduct;
@@ -16,12 +16,11 @@ export default function UpdateStockPopup({
   show,
   onCancel,
 }: UpdateStockPopupProps) {
-  const [newStock, setNewStock] = useState<number>();
+  const [newStock, setNewStock] = useState<number>(product?.stockActual || 0);
   const [isUpdatingStock, setIsUpdatingStock] = useState(false);
 
   const handleCancel = (event: any) => {
     event.preventDefault();
-    setNewStock(0);
     onCancel();
   };
 
@@ -47,7 +46,7 @@ export default function UpdateStockPopup({
     "Actualizar " +
     (newStock
       ? `${newStock}` + (newStock > 1 ? " unidades" : " unidad") + " de stock"
-      : " stock");
+      : " stock vacío");
 
   if (!show) {
     return null;
@@ -55,7 +54,7 @@ export default function UpdateStockPopup({
 
   return (
     <div className="fixed flex items-center justify-center z-10">
-      <div className="bg-white p-4 rounded shadow-lg min-w-[400px]">
+      <div className="bg-white p-4 rounded shadow-lg min-w-[500px]">
         <h2 className="text-xl font-bold mb-4">
           Actualizar el stock de {product?.nombre}
         </h2>
@@ -64,7 +63,7 @@ export default function UpdateStockPopup({
             className=""
             type="number"
             placeholder="Actualizar con nuevo stock"
-            value={product?.stockActual}
+            value={newStock}
             min={0}
             max={MAX_STOCK}
             required
@@ -77,7 +76,10 @@ export default function UpdateStockPopup({
             <Button color="red" onClick={handleCancel}>
               Cancelar
             </Button>
-            <Button type="submit" disabled={isUpdatingStock || !newStock}>
+            <Button
+              type="submit"
+              disabled={isUpdatingStock || Number.isNaN(newStock)}
+            >
               {isUpdatingStock ? "Actualizando stock..." : updateStockText}
             </Button>
           </div>

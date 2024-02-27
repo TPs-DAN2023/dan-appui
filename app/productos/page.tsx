@@ -11,7 +11,7 @@ import {
   AddToCartPopup,
   RemoveFromCartPopup,
   Error,
-  Filters,
+  UpdateStockPopup,
 } from "@/components";
 import { useEffect, useState } from "react";
 import { extractProductAttributes, hasUserType } from "@/utils";
@@ -27,20 +27,17 @@ function Productos() {
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [isRemovingFromCart, setIsRemovingFromCart] = useState(false);
   const [isUpdatingProduct, setIsUpdatingProduct] = useState(false);
+  const [isUpdatingStock, setIsUpdatingStock] = useState(false);
   const [isDeletingProduct, setIsDeletingProduct] = useState(false);
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(true);
   const [reFetch, setReFetch] = useState(false);
-  const [query, setQuery] = useState("");
 
   useEffect(() => {
     setIsLoading(true);
     async function fetchData() {
       try {
-        const data = await apiCall<IProduct[]>(
-          API_URLS.products + query,
-          "GET"
-        );
+        const data = await apiCall<IProduct[]>(API_URLS.products, "GET");
         setProducts(data);
       } catch (error) {
         setError(error as Error);
@@ -50,7 +47,7 @@ function Productos() {
     }
 
     fetchData();
-  }, [reFetch, query]);
+  }, [reFetch]);
 
   const handleAddToCart = (newStock: number, product?: IProduct) => {
     const cart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -107,7 +104,11 @@ function Productos() {
     }
   };
 
-  const isPopupOpen = isDeletingProduct || isAddingToCart || isRemovingFromCart;
+  const isPopupOpen =
+    isDeletingProduct ||
+    isAddingToCart ||
+    isRemovingFromCart ||
+    isUpdatingStock;
 
   if (isLoading) return <Loading />;
   if (error) return <Error message={error.message} />;
@@ -116,9 +117,16 @@ function Productos() {
     <>
       <Layout className={`${isPopupOpen ? "opacity-50" : ""}`}>
         <div className="overflow-x-hidden overflow-y-scroll border-r min-w-[400px]">
-          <Filters setQuery={setQuery} />
           <List<IProduct>
             items={products || []}
+            onDelete={(item) => {
+              setSelectedItem(item as IProduct);
+              setIsDeletingProduct(true);
+            }}
+            onUpdateStock={(item) => {
+              setSelectedItem(item as IProduct);
+              setIsUpdatingStock(true);
+            }}
             onRemoveFromCart={(item) => {
               setSelectedItem(item as IProduct);
               setIsRemovingFromCart(true);
@@ -131,13 +139,11 @@ function Productos() {
               setSelectedItem(item as IProduct);
               setIsUpdatingProduct(true);
             }}
-            onDelete={(item) => {
-              setSelectedItem(item as IProduct);
-              setIsDeletingProduct(true);
-            }}
             renderItem={(
               item,
               onDelete,
+              onChangeOrderState,
+              onUpdateStock,
               onRemoveFromCart,
               onAddToCart,
               onEdit
@@ -164,6 +170,7 @@ function Productos() {
                   status={productAttributes.status}
                   onDelete={() => onDelete(item)}
                   disabledAddToCartButton={isAtMaxStock}
+                  onUpdateStock={() => onUpdateStock && onUpdateStock(item)}
                   onRemoveFromCart={
                     isInCart
                       ? () => onRemoveFromCart && onRemoveFromCart(item)
@@ -220,6 +227,11 @@ function Productos() {
             onDelete={handleDelete}
             onCancel={() => setIsDeletingProduct(false)}
             messageTitle={`¿Está seguro que desea eliminar el producto seleccionado (id=${selectedItem?.id})?`}
+          />
+          <UpdateStockPopup
+            show={isUpdatingStock}
+            product={selectedItem}
+            onCancel={() => setIsUpdatingStock(false)}
           />
           <AddToCartPopup
             show={isAddingToCart}
