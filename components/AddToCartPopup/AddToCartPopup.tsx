@@ -43,7 +43,6 @@ export default function AddToCartPopup({
   const handleSubmit = (event: any) => {
     event.preventDefault();
     setIsAddingToCart(true);
-    // Here you can call your API to create the category
     console.log("Añadido al carrito!");
     onAddToCart(stock!, product);
     handleCancel(event);
