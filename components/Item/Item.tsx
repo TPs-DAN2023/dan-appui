@@ -4,10 +4,12 @@ import { IItem } from "@/interfaces";
 import { IconButton } from "@/components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faArrowsUpDown,
   faCartArrowDown,
   faCartPlus,
   faEdit,
   faEye,
+  faFlag,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { hasUserType } from "@/utils";
@@ -20,6 +22,8 @@ export default function Item<T>({
   footer,
   status,
   onDelete,
+  onChangeOrderState,
+  onUpdateStock,
   disabledAddToCartButton,
   onRemoveFromCart,
   onAddToCart,
@@ -33,6 +37,16 @@ export default function Item<T>({
           {title}
         </p>
         <div className="flex gap-x-3">
+          {onChangeOrderState && hasUserType(USER_TYPES.ADMIN) && (
+            <IconButton onClick={() => onChangeOrderState(item)}>
+              <FontAwesomeIcon icon={faFlag} color="purple" />
+            </IconButton>
+          )}
+          {onUpdateStock && hasUserType(USER_TYPES.ADMIN) && (
+            <IconButton onClick={() => onUpdateStock(item)}>
+              <FontAwesomeIcon icon={faArrowsUpDown} color="purple" />
+            </IconButton>
+          )}
           {onRemoveFromCart && hasUserType(USER_TYPES.USER) && (
             <IconButton onClick={() => onRemoveFromCart(item)}>
               <FontAwesomeIcon icon={faCartArrowDown} color="red" />

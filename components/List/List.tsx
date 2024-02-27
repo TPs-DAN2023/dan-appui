@@ -2,14 +2,15 @@ import { IIdentifiable, IList } from "@/interfaces";
 
 export default function List<T extends IIdentifiable>({
   items,
-  renderItem,
   onDelete,
+  renderItem,
+  onChangeOrderState,
+  onUpdateStock,
   onRemoveFromCart,
   onAddToCart,
   onEdit,
   onView,
 }: IList<T>) {
-  // console.log("renderItem", renderItem);
   return (
     <ul className="flex flex-col justify-center">
       {items &&
@@ -21,6 +22,8 @@ export default function List<T extends IIdentifiable>({
             {renderItem(
               item,
               onDelete,
+              onChangeOrderState,
+              onUpdateStock,
               onRemoveFromCart,
               onAddToCart,
               onEdit,
