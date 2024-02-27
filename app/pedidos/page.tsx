@@ -9,6 +9,7 @@ import {
   Loading,
   ConfirmDeletePopup,
   Error,
+  Filters,
 } from "@/components";
 import { useEffect, useState } from "react";
 import { extractOrderAttributes, hasUserType } from "@/utils";
@@ -25,6 +26,7 @@ function Pedidos() {
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(true);
   const [reFetch, setReFetch] = useState(false);
+  const [query, setQuery] = useState("");
 
   const router = useRouter();
 
@@ -36,7 +38,7 @@ function Pedidos() {
     setIsLoading(true);
     async function fetchData() {
       try {
-        const data = await apiCall<IOrder[]>(API_URLS.orders, "GET");
+        const data = await apiCall<IOrder[]>(API_URLS.orders + query, "GET");
         setOrders(data);
       } catch (error) {
         setError(error as Error);
@@ -46,7 +48,7 @@ function Pedidos() {
     }
 
     fetchData();
-  }, [reFetch]);
+  }, [reFetch, query]);
 
   const handleDelete = async () => {
     try {
@@ -73,6 +75,7 @@ function Pedidos() {
     <>
       <Layout className={`${isPopupOpen ? "opacity-50" : ""}`}>
         <div className="overflow-x-hidden overflow-y-scroll border-r min-w-[400px]">
+          <Filters setQuery={setQuery} />
           <List<IOrder>
             items={orders || []}
             onView={(item) => {

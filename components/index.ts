@@ -25,3 +25,4 @@ export { default as RemoveFromCartPopup } from "./RemoveFromCartPopup/RemoveFrom
 export { default as UserDetails } from "./UserDetails/UserDetails"
 export { default as EmptyCart } from "./EmptyCart/EmptyCart"
 export { default as UpdateStockPopup } from "./UpdateStockPopup/UpdateStockPopup"
+export { default as Filters } from "./Filters/Filters"

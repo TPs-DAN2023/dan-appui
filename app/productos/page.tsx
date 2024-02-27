@@ -11,6 +11,7 @@ import {
   AddToCartPopup,
   RemoveFromCartPopup,
   Error,
+  Filters,
 } from "@/components";
 import { useEffect, useState } from "react";
 import { extractProductAttributes, hasUserType } from "@/utils";
@@ -30,12 +31,16 @@ function Productos() {
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(true);
   const [reFetch, setReFetch] = useState(false);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     setIsLoading(true);
     async function fetchData() {
       try {
-        const data = await apiCall<IProduct[]>(API_URLS.products, "GET");
+        const data = await apiCall<IProduct[]>(
+          API_URLS.products + query,
+          "GET"
+        );
         setProducts(data);
       } catch (error) {
         setError(error as Error);
@@ -45,7 +50,7 @@ function Productos() {
     }
 
     fetchData();
-  }, [reFetch]);
+  }, [reFetch, query]);
 
   const handleAddToCart = (newStock: number, product?: IProduct) => {
     const cart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -111,6 +116,7 @@ function Productos() {
     <>
       <Layout className={`${isPopupOpen ? "opacity-50" : ""}`}>
         <div className="overflow-x-hidden overflow-y-scroll border-r min-w-[400px]">
+          <Filters setQuery={setQuery} />
           <List<IProduct>
             items={products || []}
             onRemoveFromCart={(item) => {
