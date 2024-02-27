@@ -1,40 +1,84 @@
 import { FormInput, IconButton } from "@/components";
-import { faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faBroom } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 interface FiltersProps {
-  setQuery: (query: string) => void;
+  query: {
+    desde: string;
+    hasta: string;
+    razonSocial: string;
+  };
+  setQueryObject: (query: {
+    desde: string;
+    hasta: string;
+    razonSocial: string;
+  }) => void;
+  setQueryString: (query: string) => void;
 }
 
-export default function Filters({ setQuery }: FiltersProps) {
-  const [query, setLocalQuery] = useState<string>("");
-  const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
-
+export default function Filters({
+  query,
+  setQueryObject,
+  setQueryString,
+}: FiltersProps) {
   const handleSearch = () => {
-    setQuery(query);
+    if (query.desde || query.hasta || query.razonSocial) {
+      let newQuery = "?";
+      let params = [];
+      if (query.desde) {
+        params.push(`desde=${query.desde}`);
+      }
+      if (query.hasta) {
+        params.push(`hasta=${query.hasta}`);
+      }
+      if (query.razonSocial) {
+        params.push(`razonSocial=${query.razonSocial}`);
+      }
+
+      newQuery += params.join("&");
+      setQueryString(newQuery);
+    }
   };
 
   const handleClear = () => {
-    setLocalQuery("");
-    setQuery("");
+    setQueryObject({ desde: "", hasta: "", razonSocial: "" });
+    setQueryString("");
   };
 
   return (
-    <div className="flex flex-row justify-center items-center">
-      <FormInput
-        type="text"
-        value={query}
-        onChange={(e) => setLocalQuery(e.target.value)}
-        placeholder="Buscar..."
-        className="w-1/2"
-      />
-      <IconButton onClick={handleSearch}>
-        <FontAwesomeIcon icon={faSearch} />
-      </IconButton>
-      <IconButton onClick={handleClear}>
-        <FontAwesomeIcon icon={faTimes} />
-      </IconButton>
-    </div>
+    <header className="flex flex-col">
+      <section className="flex justify-around">
+        <FormInput
+          type="text"
+          value={query.razonSocial}
+          onChange={(e) =>
+            setQueryObject({ ...query, razonSocial: e.target.value })
+          }
+          placeholder="Nombre cliente"
+          className="w-fit"
+        />
+        <IconButton onClick={handleSearch} label="Buscar">
+          <FontAwesomeIcon icon={faSearch} />
+        </IconButton>
+        <IconButton onClick={handleClear} label="Limpiar">
+          <FontAwesomeIcon icon={faBroom} />
+        </IconButton>
+      </section>
+      <section className="flex">
+        <FormInput
+          label="Fecha desde"
+          type="date"
+          value={query.desde}
+          onChange={(e) => setQueryObject({ ...query, desde: e.target.value })}
+        />
+        <FormInput
+          label="Fecha hasta"
+          type="date"
+          value={query.hasta}
+          onChange={(e) => setQueryObject({ ...query, hasta: e.target.value })}
+        />
+      </section>
+    </header>
   );
 }

@@ -10,6 +10,7 @@ import {
   ConfirmDeletePopup,
   Error,
   Filters,
+  ChangeOrderStatePopup,
 } from "@/components";
 import { useEffect, useState } from "react";
 import { extractOrderAttributes, hasUserType } from "@/utils";
@@ -23,10 +24,16 @@ function Pedidos() {
   const [orders, setOrders] = useState<IOrder[]>([]);
   const [selectedItem, setSelectedItem] = useState<IOrder>();
   const [isDeletingOrder, setIsDeletingOrder] = useState(false);
+  const [isUpdatingOrderState, setIsUpdatingOrderState] = useState(false);
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(true);
   const [reFetch, setReFetch] = useState(false);
   const [query, setQuery] = useState("");
+  const [queryObject, setQueryObject] = useState({
+    desde: "",
+    hasta: "",
+    razonSocial: "",
+  });
 
   const router = useRouter();
 
@@ -66,7 +73,7 @@ function Pedidos() {
     }
   };
 
-  const isPopupOpen = isDeletingOrder;
+  const isPopupOpen = isDeletingOrder || isUpdatingOrderState;
 
   if (isLoading) return <Loading />;
   if (error) return <Error message={error.message} />;
@@ -75,9 +82,17 @@ function Pedidos() {
     <>
       <Layout className={`${isPopupOpen ? "opacity-50" : ""}`}>
         <div className="overflow-x-hidden overflow-y-scroll border-r min-w-[400px]">
-          <Filters setQuery={setQuery} />
+          <Filters
+            query={queryObject}
+            setQueryObject={setQueryObject}
+            setQueryString={setQuery}
+          />
           <List<IOrder>
             items={orders || []}
+            onChangeOrderState={(item) => {
+              setSelectedItem(item as IOrder);
+              setIsUpdatingOrderState(true);
+            }}
             onView={(item) => {
               console.log("Viewing item", item);
               setSelectedItem(item as IOrder);
@@ -89,6 +104,8 @@ function Pedidos() {
             renderItem={(
               item,
               onDelete,
+              onChangeOrderState,
+              onUpdateStock,
               onRemoveFromCart,
               onAddToCart,
               onEdit,
@@ -102,6 +119,9 @@ function Pedidos() {
                   body={orderAttributes.body}
                   footer={orderAttributes.footer}
                   status={orderAttributes.status}
+                  onChangeOrderState={() =>
+                    onChangeOrderState && onChangeOrderState(item)
+                  }
                   onDelete={() => onDelete(item)}
                   onView={() => onView && onView(item)}
                 />
@@ -131,7 +151,7 @@ function Pedidos() {
             buttonText={
               hasUserType(USER_TYPES.USER)
                 ? "Agregar productos para crear pedido"
-                : ""
+                : "No debería estar aquí...	"
             }
             onClick={() => handleNavigation(ROUTES.PRODUCTS)}
             showButton={hasUserType(USER_TYPES.USER)}
@@ -150,6 +170,11 @@ function Pedidos() {
             onDelete={handleDelete}
             onCancel={() => setIsDeletingOrder(false)}
             messageTitle={`¿Está seguro que desea eliminar el pedido seleccionado (id=${selectedItem?.id})?`}
+          />
+          <ChangeOrderStatePopup
+            show={isUpdatingOrderState}
+            order={selectedItem}
+            onCancel={() => setIsUpdatingOrderState(false)}
           />
         </div>
       )}
