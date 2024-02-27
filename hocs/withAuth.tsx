@@ -30,7 +30,7 @@ const withAuth = (WrappedComponent: React.ComponentType<any>) => {
       checkAuth();
     }, [userLoggedIn, loading, router]);
 
-    if (!developMode || (!userLoggedIn && loading)) return <Loading />;
+    if (loading || (!userLoggedIn && !developMode)) return <Loading />;
 
     return <WrappedComponent {...props} />;
   };
