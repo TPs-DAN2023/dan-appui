@@ -6,11 +6,14 @@ import { mockApiCall } from '@/mocks';
 const session = typeof window !== 'undefined' ? localStorage.getItem('session') : null;
 const token = session ? JSON.parse(session).token : '';
 
-const isDevelopment = process.env.NODE_ENV === 'development';
-
+// Get actual mode
+const developMode =
+  typeof window !== "undefined"
+    ? localStorage.getItem("developMode") === "true"
+    : false;
 export const apiCall = async <T,>(url: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH', body?: any): Promise<T> => {
 
-  if (isDevelopment) {
+  if (developMode) {
     console.log('Llamada con datos mockeados', url, method, body);
     // I have a mockAPI file that contains the mock data
 
