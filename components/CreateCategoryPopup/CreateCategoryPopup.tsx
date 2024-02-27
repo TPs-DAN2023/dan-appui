@@ -1,8 +1,7 @@
-import { API_URLS } from "@/services";
+import { API_URLS, apiCall } from "@/services";
 import { Button, FormInput } from "@/components";
 import { ICategory } from "@/interfaces";
 import { useState } from "react";
-import { getUserToken } from "@/utils";
 
 interface CreateCategoryProps {
   show: boolean;
@@ -31,26 +30,17 @@ export default function CreateCategory({
     setIsCreatingCategory(true);
 
     try {
-      const response = await fetch(API_URLS.categories, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getUserToken()}`,
-        },
-        body: JSON.stringify(category),
-      });
-
-      if (!response.ok) {
-        throw new Error("Error creating category");
-      }
-
-      const newCategory = await response.json();
+      const newCategory = await apiCall<ICategory>(
+        API_URLS.categories,
+        "POST",
+        category
+      );
       console.log("Categoría creada!", newCategory);
-      setIsCreatingCategory(false);
-      handleCancel(event);
     } catch (error) {
       console.error(error);
+    } finally {
       setIsCreatingCategory(false);
+      handleCancel(event);
     }
   };
 

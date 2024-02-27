@@ -1,8 +1,7 @@
-import { API_URLS } from "@/services";
+import { API_URLS, apiCall } from "@/services";
 import { Button, FormInput } from "@/components";
 import { IUserType } from "@/interfaces";
 import { useState } from "react";
-import { getUserToken } from "@/utils";
 
 interface CreateUserTypeProps {
   show: boolean;
@@ -30,26 +29,17 @@ export default function CreateUserType({
     setIsCreatingUserType(true);
 
     try {
-      const response = await fetch(API_URLS.userTypes, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getUserToken()}`,
-        },
-        body: JSON.stringify(userType),
-      });
-
-      if (!response.ok) {
-        throw new Error("Error creating user type");
-      }
-
-      const newUserType = await response.json();
+      const newUserType = await apiCall<IUserType>(
+        API_URLS.userTypes,
+        "POST",
+        userType
+      );
       console.log("Tipo de usuario creado!", newUserType);
-      setIsCreatingUserType(false);
-      handleCancel(event);
     } catch (error) {
       console.error(error);
+    } finally {
       setIsCreatingUserType(false);
+      handleCancel(event);
     }
   };
 

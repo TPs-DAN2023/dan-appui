@@ -1,8 +1,7 @@
-import { API_URLS } from "@/services";
+import { API_URLS, apiCall } from "@/services";
 import { useState } from "react";
 import { Button, FormInput } from "@/components";
 import { IProvider } from "@/interfaces";
-import { getUserToken } from "@/utils";
 
 interface CreateProviderProps {
   show: boolean;
@@ -32,26 +31,17 @@ export default function CreateProvider({
     setIsCreatingProvider(true);
 
     try {
-      const response = await fetch(API_URLS.providers, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getUserToken()}`,
-        },
-        body: JSON.stringify(provider),
-      });
-
-      if (!response.ok) {
-        throw new Error("Error creating provider");
-      }
-
-      const newProvider = await response.json();
+      const newProvider = await apiCall<IProvider>(
+        API_URLS.providers,
+        "POST",
+        provider
+      );
       console.log("Proveedor creado!", newProvider);
-      setIsCreatingProvider(false);
-      handleCancel(event);
     } catch (error) {
       console.error(error);
+    } finally {
       setIsCreatingProvider(false);
+      handleCancel(event);
     }
   };
 
