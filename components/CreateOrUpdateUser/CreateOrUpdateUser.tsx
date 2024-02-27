@@ -208,7 +208,10 @@ export default function CreateOrUpdateUser({
         <div className="absolute inset-0 flex items-center justify-center z-10">
           <CreateUserTypePopup
             show={isCreatingUserType}
-            onCancel={() => setIsCreatingUserType(false)}
+            onCancel={() => {
+              setIsCreatingUserType(false);
+              setReFetch(!reFetch); // TODO: See if works
+            }}
           />
 
           <ConfirmCancelPopup
