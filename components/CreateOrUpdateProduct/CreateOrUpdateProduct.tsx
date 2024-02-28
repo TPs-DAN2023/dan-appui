@@ -93,7 +93,11 @@ export default function CreateOrUpdateProduct({
           productToUpdate ? `/${productToUpdate.id}` : ""
         }`,
         productToUpdate ? "PUT" : "POST",
-        product
+        {
+          ...product,
+          categoriaId: product.categoria?.id,
+          proveedorId: product.proveedor?.id,
+        }
       );
       console.log(
         `Producto ${productToUpdate ? "actualizado" : "creado"}!`,
