@@ -1,5 +1,5 @@
 "use client";
-import { API_URLS, apiCall, usersAPI } from "@/services";
+import { API_URLS, apiCall } from "@/services";
 import {
   List,
   OrderDetails,
