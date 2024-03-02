@@ -6,6 +6,7 @@ export const API_URLS = {
   orders: `${API_BASE_URL}/pedidos`,
   products: `${API_BASE_URL}/productos`,
   providers: `${API_BASE_URL}/productos/proveedores`,
+  sales: `${API_BASE_URL}/ofertas`,
   users: `${API_BASE_URL}/usuarios`,
   userTypes: `${API_BASE_URL}/usuarios/tipos`,
 };

@@ -44,6 +44,12 @@ export default function CheckMS() {
         >
           Check ms-pedidos
         </Button>
+        <Button
+          onClick={() => checkMicroService(API_URLS.sales + "/health")}
+          color="red"
+        >
+          Check ms-ofertas
+        </Button>
       </header>
       <main>
         {Object.keys(msStatus).length > 0 && (
