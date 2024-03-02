@@ -1,6 +1,6 @@
 "use client";
 
-import { authAPI } from "@/services";
+import { login } from "@/services";
 import { Button, CheckMS } from "@/components";
 import { faLock, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -68,7 +68,7 @@ export default function Login() {
         );
       } else {
         console.log("Production mode");
-        const result = await authAPI.login(user, password);
+        const result = await login(user, password);
 
         // Store the session in localStorage
         localStorage.setItem("session", JSON.stringify(result));
