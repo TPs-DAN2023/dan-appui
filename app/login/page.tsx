@@ -89,7 +89,7 @@ export default function Login() {
 
   return (
     <main className="flex flex-col h-screen justify-between items-center">
-      <CheckMS />
+      {!developMode && <CheckMS />}
       <div className="flex-grow flex flex-col w-full max-w-xl px-4 gap-y-2 items-center justify-center">
         <article
           className={`p-2 rounded-lg mx-4 opacity-90 text-center ${
@@ -109,39 +109,43 @@ export default function Login() {
             TP Integrador - DAN 2023
           </header>
           <form onSubmit={handleLogin}>
-            <div className="flex items-center mb-4 rounded-md bg-blue-50">
-              <FontAwesomeIcon icon={faUser} className="mx-2 w-6 h-6" />
-              <input
-                className="p-2 rounded-md flex-grow bg-blue-50"
-                id="user"
-                onChange={(e) => setUser(e.target.value)}
-                onFocus={() => setError("H")}
-                placeholder="Usuario"
-                type="text"
-                value={user}
-                required
-              />
-            </div>
-            <div className="flex items-center mb-4 rounded-md bg-blue-50">
-              <FontAwesomeIcon icon={faLock} className="mx-2 w-6 h-6" />
-              <input
-                className="p-2 rounded-md flex-grow bg-blue-50"
-                id="password"
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="*********"
-                type={showPassword ? "text" : "password"}
-                value={password}
-                required
-              />
-              <button
-                className="p-1 rounded-md bg-gray-300 mr-1 ml-1 hover:bg-gray-400 transition duration-200 ease-in-out text-sm"
-                onClick={() => setShowPassword(!showPassword)}
-                onFocus={() => setError("H")}
-                type="button"
-              >
-                {showPassword ? "Ocultar" : "Mostrar"}
-              </button>
-            </div>
+            {!developMode && (
+              <>
+                <div className="flex items-center mb-4 rounded-md bg-blue-50">
+                  <FontAwesomeIcon icon={faUser} className="mx-2 w-6 h-6" />
+                  <input
+                    className="p-2 rounded-md flex-grow bg-blue-50"
+                    id="user"
+                    onChange={(e) => setUser(e.target.value)}
+                    onFocus={() => setError("H")}
+                    placeholder="Usuario"
+                    type="text"
+                    value={user}
+                    required
+                  />
+                </div>
+                <div className="flex items-center mb-4 rounded-md bg-blue-50">
+                  <FontAwesomeIcon icon={faLock} className="mx-2 w-6 h-6" />
+                  <input
+                    className="p-2 rounded-md flex-grow bg-blue-50"
+                    id="password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="*********"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    required
+                  />
+                  <button
+                    className="p-1 rounded-md bg-gray-300 mr-1 ml-1 hover:bg-gray-400 transition duration-200 ease-in-out text-sm"
+                    onClick={() => setShowPassword(!showPassword)}
+                    onFocus={() => setError("H")}
+                    type="button"
+                  >
+                    {showPassword ? "Ocultar" : "Mostrar"}
+                  </button>
+                </div>
+              </>
+            )}
             <div className="flex flex-col items-center justify-center">
               <Button
                 type="submit"
@@ -154,7 +158,7 @@ export default function Login() {
           </form>
         </section>
       </div>
-      <Button onClick={handleChangeMode} color="green">
+      <Button className="mb-2" onClick={handleChangeMode} color="green">
         Probar con {developMode ? "Docker" : "Mocks"}
       </Button>
       {developMode && (
