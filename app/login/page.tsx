@@ -27,7 +27,10 @@ export default function Login() {
   const [user, setUser] = useState("");
 
   const [developMode, setDevelopMode] = useState(false);
-  const [devUserType, setDevUserType] = useState(1);
+  const [devUserType, setDevUserType] = useState(0);
+  const warningDevelopMode = developMode
+    ? "¡Cuidado! Probará el sistema sin conectarse a Docker, con datos mockeados."
+    : "";
 
   useEffect(() => {
     setDevelopMode(localStorage.getItem("developMode") === "true");
@@ -48,17 +51,38 @@ export default function Login() {
       console.log("Logging in...");
       if (developMode) {
         console.log("Development mode");
-        // Initialize localStorage with mock data
+        // Initialize localStorage with static mock data
         localStorage.setItem(
           "mocks",
           JSON.stringify({
             tiposUsuario: mockUserTypes(),
             categorias: mockCategories(),
             proveedores: mockProviders(),
-            usuarios: mockUsers(),
+          })
+        );
+
+        // Append products and users which depends on the static data
+        localStorage.setItem(
+          "mocks",
+          JSON.stringify({
+            ...JSON.parse(localStorage.getItem("mocks") || "{}"),
             productos: mockProducts(),
+            usuarios: mockUsers(),
+          })
+        );
+
+        // Lastly, append the orders which depends on the products
+        localStorage.setItem(
+          "mocks",
+          JSON.stringify({
+            ...JSON.parse(localStorage.getItem("mocks") || "{}"),
             pedidos: mockOrders(),
           })
+        );
+
+        console.log(
+          "Ingresando como usuario",
+          devUserType === 1 ? "VENDEDOR" : "USUARIO_EMPRESA"
         );
 
         // Set the mock session
@@ -76,6 +100,7 @@ export default function Login() {
       setUserLoggedIn(true);
       await router.push(ROUTES.HOME);
     } catch (error) {
+      console.error("Error al loguearse:", error);
       if (error instanceof Error) {
         setError("Error al loguearse:" + error.message);
       }
@@ -102,6 +127,23 @@ export default function Login() {
             }`}
           >
             {error}
+          </span>
+        </article>
+        <article
+          className={`p-2 rounded-lg mx-4 opacity-90 text-center ${
+            warningDevelopMode.length > 1
+              ? "bg-yellow-200 shadow-lg "
+              : "bg-transparent"
+          }`}
+        >
+          <span
+            className={`text-xs font-bold " ${
+              warningDevelopMode.length > 1
+                ? "text-yellow-700"
+                : "text-transparent"
+            }`}
+          >
+            {warningDevelopMode}
           </span>
         </article>
         <section className="flex flex-col p-14 rounded-lg mx-4 bg-blue-300 shadow-lg opacity-90">
@@ -146,11 +188,24 @@ export default function Login() {
                 </div>
               </>
             )}
-            <div className="flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center justify-center gap-y-3">
+              {developMode && (
+                <select
+                  className="border-2 border-gray-300 p-2"
+                  value={devUserType}
+                  onChange={(e) => setDevUserType(parseInt(e.target.value))}
+                >
+                  <option value="" hidden>
+                    Seleccione el tipo de su usuario
+                  </option>
+                  <option value="1">VENDEDOR</option>
+                  <option value="2">USUARIO_EMPRESA</option>
+                </select>
+              )}
               <Button
                 type="submit"
                 className="pl-10 pr-10"
-                disabled={isLoggingIn}
+                disabled={isLoggingIn || (developMode && !devUserType)}
               >
                 {isLoggingIn ? "Ingresando..." : "Ingresar"}
               </Button>
@@ -161,16 +216,6 @@ export default function Login() {
       <Button className="mb-2" onClick={handleChangeMode} color="green">
         Probar con {developMode ? "Docker" : "Mocks"}
       </Button>
-      {developMode && (
-        <select
-          className="border-2 border-gray-300 p-2 m-2"
-          value={devUserType}
-          onChange={(e) => setDevUserType(parseInt(e.target.value))}
-        >
-          <option value="1">Usuario ADMIN</option>
-          <option value="2">Usuario USER</option>
-        </select>
-      )}
     </main>
   );
 }
