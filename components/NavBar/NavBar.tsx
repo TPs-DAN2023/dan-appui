@@ -15,6 +15,7 @@ export default function NavBar() {
   const router = useRouter();
 
   const handleLogout = async () => {
+    localStorage.removeItem("mocks");
     localStorage.removeItem("session");
     setUserLoggedIn(false);
     await router.push(ROUTES.LOGIN);
