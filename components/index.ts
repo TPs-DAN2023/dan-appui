@@ -28,3 +28,4 @@ export { default as UpdateStockPopup } from "./UpdateStockPopup/UpdateStockPopup
 export { default as Filters } from "./Filters/Filters"
 export { default as ChangeOrderStatePopup } from "./ChangeOrderStatePopup/ChangeOrderStatePopup"
 export { default as CheckMS } from "./CheckMS/CheckMS"
+export { default as ListLoadingSkeleton } from "./ListLoadingSkeleton/ListLoadingSkeleton"
