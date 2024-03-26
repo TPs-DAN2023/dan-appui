@@ -12,13 +12,15 @@ import {
   RemoveFromCartPopup,
   Error,
   UpdateStockPopup,
+  ListLoadingSkeleton,
 } from "@/components";
-import { useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { extractProductAttributes, hasUserType } from "@/utils";
-import { IProduct } from "@/interfaces";
+import { IIdentifiable, IProduct } from "@/interfaces";
 import { faBasketShopping } from "@fortawesome/free-solid-svg-icons";
 import { withAuth } from "@/hocs";
 import { USER_TYPES } from "@/constants";
+import React from "react";
 
 function Productos() {
   const [products, setProducts] = useState<IProduct[]>([]);
@@ -30,19 +32,20 @@ function Productos() {
   const [isUpdatingStock, setIsUpdatingStock] = useState(false);
   const [isDeletingProduct, setIsDeletingProduct] = useState(false);
   const [error, setError] = useState<Error>();
-  const [isLoading, setIsLoading] = useState(true);
   const [reFetch, setReFetch] = useState(false);
 
+  const handleDeletePressedButton = useCallback((item: IProduct) => {
+    setSelectedItem(item);
+    setIsDeletingProduct(true);
+  }, []);
+
   useEffect(() => {
-    setIsLoading(true);
     async function fetchData() {
       try {
         const data = await apiCall<IProduct[]>(API_URLS.products, "GET");
         setProducts(data);
       } catch (error) {
         setError(error as Error);
-      } finally {
-        setIsLoading(false);
       }
     }
 
@@ -110,78 +113,80 @@ function Productos() {
     isRemovingFromCart ||
     isUpdatingStock;
 
-  if (isLoading) return <Loading />;
+  const LazyLoadedList: React.LazyExoticComponent<typeof List<IIdentifiable>> =
+    React.lazy(() => import("@/components/List/List"));
+
   if (error) return <Error message={error.message} />;
 
   return (
     <>
       <Layout className={`${isPopupOpen ? "opacity-50" : ""}`}>
         <div className="overflow-x-hidden overflow-y-scroll border-r min-w-[400px]">
-          <List<IProduct>
-            items={products || []}
-            onDelete={(item) => {
-              setSelectedItem(item as IProduct);
-              setIsDeletingProduct(true);
-            }}
-            onUpdateStock={(item) => {
-              setSelectedItem(item as IProduct);
-              setIsUpdatingStock(true);
-            }}
-            onRemoveFromCart={(item) => {
-              setSelectedItem(item as IProduct);
-              setIsRemovingFromCart(true);
-            }}
-            onAddToCart={(item) => {
-              setSelectedItem(item as IProduct);
-              setIsAddingToCart(true);
-            }}
-            onEdit={(item) => {
-              setSelectedItem(item as IProduct);
-              setIsUpdatingProduct(true);
-            }}
-            renderItem={(
-              item,
-              onDelete,
-              onChangeOrderState,
-              onUpdateStock,
-              onRemoveFromCart,
-              onAddToCart,
-              onEdit
-            ) => {
-              const productAttributes = extractProductAttributes(
-                item as IProduct
-              );
+          <Suspense fallback={<ListLoadingSkeleton />}>
+            <LazyLoadedList
+              items={products || []}
+              onDelete={(item) => handleDeletePressedButton(item as IProduct)}
+              onUpdateStock={(item) => {
+                setSelectedItem(item as IProduct);
+                setIsUpdatingStock(true);
+              }}
+              onRemoveFromCart={(item) => {
+                setSelectedItem(item as IProduct);
+                setIsRemovingFromCart(true);
+              }}
+              onAddToCart={(item) => {
+                setSelectedItem(item as IProduct);
+                setIsAddingToCart(true);
+              }}
+              onEdit={(item) => {
+                setSelectedItem(item as IProduct);
+                setIsUpdatingProduct(true);
+              }}
+              renderItem={(
+                item,
+                onDelete,
+                onChangeOrderState,
+                onUpdateStock,
+                onRemoveFromCart,
+                onAddToCart,
+                onEdit
+              ) => {
+                const productAttributes = extractProductAttributes(
+                  item as IProduct
+                );
 
-              // Check if the product is in the cart and if it is at max stock
-              const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-              const cartItem = cart.find(
-                (cartItem: { product: IProduct; selectedStock: number }) =>
-                  cartItem.product.id === item.id
-              );
-              const isInCart = Boolean(cartItem);
-              const isAtMaxStock =
-                cartItem && cartItem.selectedStock === item.stockActual;
-              return (
-                <Item
-                  item={item}
-                  title={productAttributes.title}
-                  body={productAttributes.body}
-                  footer={productAttributes.footer}
-                  status={productAttributes.status}
-                  onDelete={() => onDelete(item)}
-                  disabledAddToCartButton={isAtMaxStock}
-                  onUpdateStock={() => onUpdateStock && onUpdateStock(item)}
-                  onRemoveFromCart={
-                    isInCart
-                      ? () => onRemoveFromCart && onRemoveFromCart(item)
-                      : undefined
-                  }
-                  onAddToCart={() => onAddToCart && onAddToCart(item)}
-                  onEdit={() => onEdit && onEdit(item)}
-                />
-              );
-            }}
-          />
+                // Check if the product is in the cart and if it is at max stock
+                const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+                const cartItem = cart.find(
+                  (cartItem: { product: IProduct; selectedStock: number }) =>
+                    cartItem.product.id === item.id
+                );
+                const isInCart = Boolean(cartItem);
+                const isAtMaxStock =
+                  cartItem &&
+                  cartItem.selectedStock === (item as IProduct).stockActual;
+                return (
+                  <Item
+                    item={item}
+                    title={productAttributes.title}
+                    body={productAttributes.body}
+                    footer={productAttributes.footer}
+                    status={productAttributes.status}
+                    onDelete={() => onDelete(item)}
+                    disabledAddToCartButton={isAtMaxStock}
+                    onUpdateStock={() => onUpdateStock && onUpdateStock(item)}
+                    onRemoveFromCart={
+                      isInCart
+                        ? () => onRemoveFromCart && onRemoveFromCart(item)
+                        : undefined
+                    }
+                    onAddToCart={() => onAddToCart && onAddToCart(item)}
+                    onEdit={() => onEdit && onEdit(item)}
+                  />
+                );
+              }}
+            />
+          </Suspense>
         </div>
 
         <div className="flex flex-col flex-grow overflow-x-hidden overflow-y-scroll">

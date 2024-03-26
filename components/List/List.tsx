@@ -11,29 +11,34 @@ export default function List<T extends IIdentifiable>({
   onEdit,
   onView,
 }: IList<T>) {
+  if (!items) {
+    return null;
+  }
+
   return (
     <ul className="flex flex-col justify-center">
-      {items &&
-        items.map((item: T) => (
-          <article
-            key={item.id}
-            className="m-4 rounded-lg bg-blue-300 opacity-85"
-          >
-            {renderItem(
-              item,
-              onDelete,
-              onChangeOrderState,
-              onUpdateStock,
-              onRemoveFromCart,
-              onAddToCart,
-              onEdit,
-              onView
-            )}
-          </article>
-        ))}
-      <span className="text-lg text-center mb-5">
-        No hay más ítems que mostrar.
-      </span>
+      {items.map((item: T) => (
+        <article
+          key={item.id}
+          className="m-4 rounded-lg bg-blue-300 opacity-85"
+        >
+          {renderItem(
+            item,
+            onDelete,
+            onChangeOrderState,
+            onUpdateStock,
+            onRemoveFromCart,
+            onAddToCart,
+            onEdit,
+            onView
+          )}
+        </article>
+      ))}
+      {items && items.length === 0 && (
+        <span className="text-lg text-center mb-5">
+          No hay más ítems que mostrar.
+        </span>
+      )}
     </ul>
   );
 }
