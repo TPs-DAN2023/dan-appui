@@ -50,6 +50,7 @@ function Carrito() {
           <EmptyCart />
         )}
         <CreateOrder
+          selectedStockAndProductArray={stockAndProductArray}
           show={isCreatingOrder}
           onCancel={() => setIsCreatingOrder(false)}
         />

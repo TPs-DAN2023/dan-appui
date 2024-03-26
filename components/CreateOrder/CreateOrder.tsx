@@ -1,19 +1,66 @@
 import { Button, FormInput } from "@/components";
+import { IOrder } from "@/interfaces";
+import { API_URLS, apiCall } from "@/services";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/constants";
 
 interface CreateOrderProps {
   show: boolean;
   onCancel: () => void;
+  selectedStockAndProductArray: { product: IProduct; selectedStock: number }[];
 }
 
-export default function CreateOrder({ show, onCancel }: CreateOrderProps) {
-  const handleSubmit = (event: any) => {
+const incompleteOrder = {
+  numeroPedido: "",
+  total: 0,
+  observaciones: "",
+};
+
+export default function CreateOrder({
+  selectedStockAndProductArray,
+  show,
+  onCancel,
+}: CreateOrderProps) {
+  incompleteOrder.total = selectedStockAndProductArray.reduce(
+    (accumulator, { product, selectedStock }) =>
+      accumulator + product.precio * selectedStock,
+    0
+  );
+
+  const [order, setOrder] = useState<IOrder>(incompleteOrder);
+  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+
+  const router = useRouter();
+
+  const removeItemsFromCart = () => {
+    localStorage.removeItem("cart");
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    // Here you can call your API to create the provider
-    console.log(`Producto creado!`);
+    setIsCreatingOrder(true);
+    try {
+      const data = await apiCall(`${API_URLS.orders}`, "POST", order);
+      console.log("Pedido creado!", data);
+      removeItemsFromCart();
+      router.push(ROUTES.ORDERS);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsCreatingOrder(false);
+    }
+  };
+
+  const handleCancel = (event: React.FormEvent) => {
+    event.preventDefault();
+    setOrder(incompleteOrder);
+    console.log("Cancelando la creación del pedido...");
+    onCancel();
   };
 
   const allInputsAreValid = () => {
-    // Here you can add your validation logic
+    // TODO: Do actual logic
     return true;
   };
 
@@ -26,7 +73,12 @@ export default function CreateOrder({ show, onCancel }: CreateOrderProps) {
       <h1 className="text-2xl font-bold">Crear pedido</h1>
       <form onSubmit={handleSubmit} className="flex flex-col">
         <FormInput type="number" placeholder="Número del pedido" />
-        <FormInput type="number" placeholder="Total del pedido" />
+        <FormInput
+          type="number"
+          placeholder="Total del pedido"
+          value={order.total}
+          disabled
+        />
         <FormInput type="text" placeholder="Observaciones" />
         <footer className="flex justify-around mt-5">
           <Button
@@ -38,8 +90,11 @@ export default function CreateOrder({ show, onCancel }: CreateOrderProps) {
           >
             Cancelar
           </Button>
-          <Button type="submit" disabled={!allInputsAreValid()}>
-            Crear
+          <Button
+            type="submit"
+            disabled={!allInputsAreValid() || isCreatingOrder}
+          >
+            {isCreatingOrder ? "Creando..." : "Crear"}
           </Button>
         </footer>
       </form>
