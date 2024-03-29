@@ -1,7 +1,7 @@
 import { Button, IconButton } from "@/components";
 import { ROUTES } from "@/constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import { faFaceFrown } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 
 export default function EmptyCart() {
@@ -13,12 +13,12 @@ export default function EmptyCart() {
 
   return (
     <div className="h-screen flex flex-col justify-center items-center">
-      <p className="text-4xl text-red-500 flex gap-x-3">
+      <div className="text-4xl text-red-500 flex gap-x-3 justify-center items-center">
         <IconButton onClick={() => {}}>
-          <FontAwesomeIcon icon={faCartShopping} className="w-6 h-6" />
+          <FontAwesomeIcon icon={faFaceFrown} className="w-6 h-6" />
         </IconButton>
         Carrito vacío
-      </p>
+      </div>
       <p className="m-4 text-center">
         ¡Aún no has añadido productos al carrito!
       </p>
