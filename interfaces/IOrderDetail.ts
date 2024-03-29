@@ -5,7 +5,7 @@ export default interface IOrderDetail {
   cantidad: number;
   descuento: number;
   producto: IProduct;
-  total: number;
+  total?: number;
   // id?: number;
   // nombre: string;
   // precio: number;
