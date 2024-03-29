@@ -15,7 +15,7 @@ export default function AddToCartPopup({
   onCancel,
   onAddToCart,
 }: AddToCartPopupProps) {
-  const [stock, setStock] = useState<number>();
+  const [stock, setStock] = useState<number>(1);
   const [maxStockAvailable, setMaxStockAvailable] = useState<number>();
   const [isAddingToCart, setIsAddingToCart] = useState(false);
 
@@ -80,7 +80,7 @@ export default function AddToCartPopup({
             required
             onChange={(e) => {
               const value = parseInt(e.target.value);
-              setStock(value > maxStockAvailable! ? maxStockAvailable : value);
+              setStock(value > maxStockAvailable! ? maxStockAvailable! : value);
             }}
           />
           <div className="flex justify-around mt-4">
