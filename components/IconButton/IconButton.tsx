@@ -16,7 +16,7 @@ export default function IconButton({
   return (
     <article className="flex flex-col justify-center">
       <button
-        className={`rounded-3xl ${
+        className={`rounded-3xl items-center flex justify-center ${
           disabled
             ? "cursor-not-allowed"
             : "cursor-pointer hover:scale-125 hover:opacity-100 transition-all  "
