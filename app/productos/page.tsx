@@ -14,7 +14,7 @@ import {
   UpdateStockPopup,
   ListLoadingSkeleton,
 } from "@/components";
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { extractProductAttributes, hasUserType } from "@/utils";
 import { IIdentifiable, IProduct } from "@/interfaces";
 import { faBasketShopping } from "@fortawesome/free-solid-svg-icons";
@@ -33,11 +33,6 @@ function Productos() {
   const [isDeletingProduct, setIsDeletingProduct] = useState(false);
   const [error, setError] = useState<Error>();
   const [reFetch, setReFetch] = useState(false);
-
-  const handleDeletePressedButton = useCallback((item: IProduct) => {
-    setSelectedItem(item);
-    setIsDeletingProduct(true);
-  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -116,6 +111,8 @@ function Productos() {
   const LazyLoadedList: React.LazyExoticComponent<typeof List<IIdentifiable>> =
     React.lazy(() => import("@/components/List/List"));
 
+  const items = useMemo(() => products || [], [products]);
+
   if (error) return <Error message={error.message} />;
 
   return (
@@ -124,8 +121,11 @@ function Productos() {
         <div className="overflow-x-hidden overflow-y-scroll border-r min-w-[400px]">
           <Suspense fallback={<ListLoadingSkeleton />}>
             <LazyLoadedList
-              items={products || []}
-              onDelete={(item) => handleDeletePressedButton(item as IProduct)}
+              items={items}
+              onDelete={(item) => {
+                setSelectedItem(item as IProduct);
+                setIsDeletingProduct(true);
+              }}
               onUpdateStock={(item) => {
                 setSelectedItem(item as IProduct);
                 setIsUpdatingStock(true);
@@ -212,6 +212,7 @@ function Productos() {
             }
             buttonText="Crear producto"
             onClick={() => setIsCreatingProduct(true)}
+            showButton={hasUserType(USER_TYPES.ADMIN)}
           />
           <CreateOrUpdateProduct
             show={isCreatingProduct || isUpdatingProduct}
