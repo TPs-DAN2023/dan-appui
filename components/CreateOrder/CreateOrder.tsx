@@ -1,5 +1,5 @@
-import { Button, FormInput } from "@/components";
-import { IOrder } from "@/interfaces";
+import { Button, FormInput, Loading } from "@/components";
+import { IOrder, IProduct } from "@/interfaces";
 import { API_URLS, apiCall } from "@/services";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -11,25 +11,46 @@ interface CreateOrderProps {
   selectedStockAndProductArray: { product: IProduct; selectedStock: number }[];
 }
 
-const incompleteOrder = {
+const incompleteOrder: IOrder = {
   numeroPedido: "",
   total: 0,
   observaciones: "",
+  fecha: new Date().toISOString(),
+  detallePedido: [],
+  user: "",
 };
+const session = JSON.parse(localStorage.getItem("session") || "{}");
 
 export default function CreateOrder({
   selectedStockAndProductArray,
   show,
   onCancel,
 }: CreateOrderProps) {
-  incompleteOrder.total = selectedStockAndProductArray.reduce(
-    (accumulator, { product, selectedStock }) =>
-      accumulator + product.precio * selectedStock,
-    0
-  );
+  const completeOrderWithInformation = () => {
+    incompleteOrder.total = selectedStockAndProductArray.reduce(
+      (accumulator, { product, selectedStock }) =>
+        accumulator + product.precio * selectedStock,
+      0
+    );
+    incompleteOrder.detallePedido = selectedStockAndProductArray.map(
+      ({ product, selectedStock }) => ({
+        producto: product as IProduct,
+        cantidad: selectedStock,
+        precio: product.precio,
+        descuento: 0,
+      })
+    );
+    incompleteOrder.user =
+      Object.keys(session).length > 0
+        ? session.userName.toUpperCase()
+        : "USUARIO";
+  };
+
+  completeOrderWithInformation();
 
   const [order, setOrder] = useState<IOrder>(incompleteOrder);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
@@ -40,6 +61,8 @@ export default function CreateOrder({
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsCreatingOrder(true);
+    console.log("Creando pedido...");
+    setIsLoading(true);
     try {
       const data = await apiCall(`${API_URLS.orders}`, "POST", order);
       console.log("Pedido creado!", data);
@@ -49,6 +72,7 @@ export default function CreateOrder({
       console.error(error);
     } finally {
       setIsCreatingOrder(false);
+      setIsLoading(false);
     }
   };
 
@@ -60,9 +84,12 @@ export default function CreateOrder({
   };
 
   const allInputsAreValid = () => {
-    // TODO: Do actual logic
-    return true;
+    return order.numeroPedido.toString().length > 0;
   };
+
+  if (isLoading) {
+    <Loading />;
+  }
 
   if (!show) {
     return null;
@@ -72,22 +99,47 @@ export default function CreateOrder({
     <div className="relative flex flex-col flex-grow items-center justify-center bg-gray-100">
       <h1 className="text-2xl font-bold">Crear pedido</h1>
       <form onSubmit={handleSubmit} className="flex flex-col">
-        <FormInput type="number" placeholder="Número del pedido" />
         <FormInput
           type="number"
-          placeholder="Total del pedido"
-          value={order.total}
+          placeholder="Número del pedido"
+          value={order.numeroPedido}
+          onChange={(e) => setOrder({ ...order, numeroPedido: e.target.value })}
+          required
+        />
+        <FormInput
+          type="string"
+          placeholder="Usuario"
+          value={`Usuario: ${order.user}`}
           disabled
         />
-        <FormInput type="text" placeholder="Observaciones" />
+        <FormInput
+          type="string"
+          placeholder="Fecha del pedido"
+          value={`Fecha: ${new Date(order.fecha).toLocaleDateString()}`}
+          disabled
+        />
+        <FormInput
+          type="string"
+          placeholder="Cantidad de productos"
+          value={`Cant. productos: ${order.detallePedido.length}`}
+          disabled
+        />
+        <FormInput
+          type="string"
+          placeholder="Total del pedido"
+          value={`Total: ${order.total}`}
+          disabled
+        />
+        <FormInput
+          type="string"
+          placeholder="Observaciones"
+          value={order.observaciones}
+          onChange={(e) =>
+            setOrder({ ...order, observaciones: e.target.value })
+          }
+        />
         <footer className="flex justify-around mt-5">
-          <Button
-            color="red"
-            onClick={(event: any) => {
-              event.preventDefault();
-              onCancel();
-            }}
-          >
+          <Button color="red" onClick={handleCancel}>
             Cancelar
           </Button>
           <Button
