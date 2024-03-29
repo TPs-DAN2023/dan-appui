@@ -37,7 +37,8 @@ export default function FormInput({
         value={value}
         onChange={onChange}
         required={required}
-        className={`border-2 border-gray-300 p-2 m-2 ${className}`}
+        className={`border-2 border-gray-300 p-2 m-2 ${className} 
+          ${disabled ? "cursor-not-allowed" : ""}`}
         disabled={disabled}
         min={min}
         max={max}
