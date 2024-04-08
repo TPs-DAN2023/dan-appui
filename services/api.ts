@@ -23,7 +23,7 @@ export const apiCall = async <T,>(url: string, method: 'GET' | 'POST' | 'PUT' | 
     return mockData as T;
   }
   try {
-    console.log('Llamando a la API: ', url, method, body);
+    console.log('Llamando a la API: ', url, method, body, token);
     const response = await fetch(url, {
       method,
       headers: {
@@ -38,7 +38,7 @@ export const apiCall = async <T,>(url: string, method: 'GET' | 'POST' | 'PUT' | 
     }
     
     if (!response.ok) {
-      throw new Error(`Falló la llamada a la API: ${response.statusText}`);
+      throw new Error(`Falló la llamada a la API: ${response.statusText}, ${response.status}`);
     }
 
     let data;
