@@ -1,10 +1,16 @@
 "use client";
 
-import { Loading, NavBar } from "@/components";
+import { Loading, NavBar, CheckMS } from "@/components";
 import { USER_TYPES } from "@/constants";
 import { withAuth } from "@/hocs";
 import { useUser } from "@/hooks";
 import { hasUserType } from "@/utils";
+
+// Get actual mode
+const developMode =
+  typeof window !== "undefined"
+    ? localStorage.getItem("developMode") === "true"
+    : false;
 
 function Home() {
   const { loading } = useUser();
@@ -16,7 +22,7 @@ function Home() {
       <header className="border border-b-blue-300">
         <NavBar />
       </header>
-      <main className="flex overflow-x-hidden overflow-y-hidden flex-grow">
+      <main className="flex flex-col overflow-x-hidden overflow-y-hidden flex-grow">
         <div className="flex flex-col items-center justify-center flex-grow text-center">
           <h1 className="text-4xl font-bold">Bienvenido a Marketplace B2B</h1>
           <p className="text-2xl max-w-[800px] text-balance mt-4">
@@ -25,6 +31,7 @@ function Home() {
               : "Desde aquí podrá ver los productos disponibles y realizar pedidos de manera rápida, segura y sin vueltas!"}
           </p>
         </div>
+        {!developMode && <CheckMS />}
       </main>
     </section>
   );

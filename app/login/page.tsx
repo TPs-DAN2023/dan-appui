@@ -1,7 +1,7 @@
 "use client";
 
 import { login } from "@/services";
-import { Button, CheckMS } from "@/components";
+import { Button } from "@/components";
 import { faLock, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ROUTES } from "@/constants";
@@ -114,7 +114,6 @@ export default function Login() {
 
   return (
     <main className="flex flex-col h-screen justify-between items-center">
-      {!developMode && <CheckMS />}
       <div className="flex-grow flex flex-col w-full max-w-xl px-4 gap-y-2 items-center justify-center">
         <article
           className={`p-2 rounded-lg mx-4 opacity-90 text-center ${
