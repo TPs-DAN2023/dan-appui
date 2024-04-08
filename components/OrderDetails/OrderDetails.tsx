@@ -28,10 +28,6 @@ export default function OrderDetails({
         </div>
       }
 
-      {/* <div className="mx-4 sm:mx-4 md:mx-20 mt-6">
-        <OrderItem order={order} onClick={() => {}} />
-      </div> */}
-
       <div className="mx-4 sm:mx-4 md:mx-20 mt-6 bg-blue-300 rounded-6 p-4">
         <div className="flex justify-between">
           <p className="text-medium font-bold">Detalle del pedido</p>
@@ -40,29 +36,37 @@ export default function OrderDetails({
             Total:
             <span className="text-medium font-bold ml-2">
               {`$${order.detallePedido.reduce(
-                (suma, pd) => suma + pd.precio,
+                (suma, pd) => suma + pd.producto.precio * pd.cantidad,
                 0
               )}`}
             </span>
           </p>
         </div>
+        <div className="flex justify-between">
+          <div className="flex flex-col flex-5">
+            <p className="text-sm">{`ID pedido: #${order.id}`}</p>
+            <p className="text-sm">{order.observaciones}</p>
+          </div>
+        </div>
 
         <hr className="my-2" />
 
-        {/* Iteramos sobre la lista de detalles de order para renderizar los elementos */}
         {order.detallePedido.map((dp) => (
-          <div key={dp.id}>
+          <div key={dp.total}>
             <div className="flex justify-between">
               <div className="flex flex-col flex-5">
-                <p>{dp.producto.descripcion}</p>
-                <div className="flex justify-between">
+                <p className="font-semibold">{dp.producto.nombre}</p>
+                <p className="text-sm">{dp.producto.descripcion}</p>
+                <div className="flex flex-col justify-between">
                   <p className="text-xs">{`Unidades: ${dp.cantidad}`}</p>
                   <p className="text-xs">{`Precio Unitario: $${dp.producto.precio}`}</p>
                 </div>
               </div>
-              <div className="flex flex-col self-center flex-1">
+              <div className="flex flex-col self-center font-semibold">
                 <p className="text-xs text-center">Total</p>
-                <p className="text-xs text-center">{`$${dp.precio}`}</p>
+                <p className="text-xs text-center">{`$${
+                  dp.producto.precio * dp.cantidad
+                }`}</p>
               </div>
             </div>
             <hr className="my-1" />
