@@ -6,7 +6,7 @@ export default interface IOrder {
   fecha: string;
   observaciones: string;
   total: number;
-  user: string; // Just userName
+  user?: string; // Just userName
   estados?: IOrderState[];
   detallePedido: IOrderDetail[];
   cliente?: ICliente;
