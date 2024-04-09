@@ -73,6 +73,17 @@ export default function OrderDetails({
           </div>
         ))}
       </div>
+
+      {order.estados?.[order.estados?.length - 1]?.estado === "RECHAZADO" && (
+        <div className="mx-4 sm:mx-4 md:mx-20 mt-6 bg-red-300 rounded-6 p-4">
+          <p className="text-medium font-bold">
+            El estado del pedido es RECHAZADO
+          </p>
+          <p className="text-sm">
+            Razón: {order.estados?.[order.estados?.length - 1]?.detalle}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
