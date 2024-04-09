@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShop, faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { ROUTES, USER_TYPES } from "@/constants";
 import Link from "next/link";
-import { Button, IconButton } from "@/components";
+import { Button, IconButton, Loading } from "@/components";
 import { useUser } from "@/hooks";
 import { hasUserType } from "@/utils";
 
@@ -25,6 +25,8 @@ export default function NavBar() {
   const handleNavigation = async (route: string) => {
     await router.push(route);
   };
+
+  if (loading) return <Loading />;
 
   return (
     <>
@@ -70,12 +72,19 @@ export default function NavBar() {
         </div>
         <div className="flex items-center gap-x-5">
           <FontAwesomeIcon icon={faUserCircle} className="w-7 h-7" />
-          <span>
-            Hola,{" "}
-            {Object.keys(session).length > 0
-              ? session.userName.toUpperCase()
-              : "USUARIO"}
-          </span>
+          <div className="flex flex-col gap-y-1 text-right">
+            <span>
+              Hola,{" "}
+              {Object.keys(session).length > 0
+                ? session.userName.toUpperCase()
+                : "USUARIO"}
+            </span>
+            <span>
+              {Object.keys(session).length > 0
+                ? "(Max. $" + session.cliente.maximoCuentaCorriente + ")"
+                : 0}
+            </span>
+          </div>
           <Button color="red" disabled={loading} onClick={handleLogout}>
             {loading ? "Saliendo..." : "Salir"}
           </Button>
