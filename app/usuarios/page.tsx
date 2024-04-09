@@ -91,8 +91,8 @@ function Usuarios() {
                 body={userAttributes.body}
                 footer={userAttributes.footer}
                 status={userAttributes.status}
-                onDelete={() => onDelete(item)}
-                onEdit={() => onEdit && onEdit(item)}
+                onDelete={onDelete}
+                onEdit={onEdit}
               />
             );
           }}
