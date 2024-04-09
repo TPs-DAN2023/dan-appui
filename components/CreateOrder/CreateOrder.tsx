@@ -36,10 +36,12 @@ export default function CreateOrder({
       ({ product, selectedStock }) => ({
         producto: product as IProduct,
         cantidad: selectedStock,
-        precio: product.precio,
         descuento: 0,
+        total: product.precio * selectedStock,
       })
     );
+    incompleteOrder.cliente =
+      Object.keys(session).length > 0 ? session.cliente : null;
     incompleteOrder.user =
       Object.keys(session).length > 0
         ? session.userName.toUpperCase()
