@@ -64,7 +64,7 @@ function Usuarios() {
   if (error) return <Error message={error.message} />;
 
   return (
-    <Layout className={`${isPopupOpen ? "opacity-50" : ""}`}>
+    <Layout>
       <div className="overflow-x-hidden overflow-y-scroll border-r min-w-[400px]">
         <List<IUser>
           items={users || []}
@@ -128,7 +128,7 @@ function Usuarios() {
           user={selectedItem}
         />
         {isPopupOpen && (
-          <div className="absolute inset-0 flex items-center justify-center z-10">
+          <div className="absolute inset-0 flex items-center justify-center z-10 bg-opacity-50 bg-white">
             <ConfirmDeletePopup
               show={isDeletingUser}
               onDelete={handleDelete}
