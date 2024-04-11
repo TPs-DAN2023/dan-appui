@@ -2,7 +2,6 @@
 
 import { mockApiCall } from '@/mocks';
 
-// const session = localStorage.getItem('session');
 const session = typeof window !== 'undefined' ? localStorage.getItem('session') : null;
 const token = session ? JSON.parse(session).token : '';
 
@@ -28,6 +27,7 @@ export const apiCall = async <T,>(url: string, method: 'GET' | 'POST' | 'PUT' | 
       method,
       headers: {
         'Content-Type': 'application/json',
+        'X-User-Info': session || '',
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(body),
