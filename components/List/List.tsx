@@ -25,9 +25,12 @@ export default function List<T extends IIdentifiable>({
           {renderItem(
             item,
             onDelete,
+            onChangeOrderState,
+            onUpdateStock,
             onRemoveFromCart,
             onAddToCart,
-            onEdit
+            onEdit,
+            onView
           )}
         </article>
       ))}
