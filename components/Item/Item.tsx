@@ -81,18 +81,8 @@ export default function Item<T>({
         </div>
       </header>
       <hr className="mt-2 mb-1 border border-blue-400" />
-      <div className="flex flex-row justify-between items-center">
-        <div className="flex flex-col">
-          {body.map((item, index) => (
-            <p
-              key={index}
-              className="overflow-ellipsis overflow-hidden whitespace-nowrap mr-2 text-small"
-            >
-              {item}
-            </p>
-          ))}
-        </div>
-        {status && (
+      {status && (
+        <div className="flex flex-row justify-end">
           <span
             className={`px-2 py-1 rounded text-sm ${
               status === "RECIBIDO" || status === "ENVIADO"
@@ -104,7 +94,19 @@ export default function Item<T>({
           >
             {status}
           </span>
-        )}
+        </div>
+      )}
+      <div className="flex flex-row justify-between items-center">
+        <div className="flex flex-col">
+          {body.map((item, index) => (
+            <p
+              key={index}
+              className="overflow-ellipsis overflow-hidden whitespace-nowrap mr-2 text-small"
+            >
+              {item}
+            </p>
+          ))}
+        </div>
       </div>
       <hr className="mt-1 mb-1 border border-blue-400" />
       <p className="text-xs italic mt-1">{footer}</p>
