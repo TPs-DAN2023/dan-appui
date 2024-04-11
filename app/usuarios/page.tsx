@@ -79,6 +79,8 @@ function Usuarios() {
           renderItem={(
             item,
             onDelete,
+            onChangeOrderState,
+            onUpdateStock,
             onRemoveFromCart,
             onAddToCart,
             onEdit
